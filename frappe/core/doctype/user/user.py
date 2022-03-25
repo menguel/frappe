@@ -751,7 +751,7 @@ def verify_password(password):
 	frappe.local.login_manager.check_password(frappe.session.user, password)
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, full_name, redirect_to):
+def sign_up(email, full_name, mobile_no, redirect_to):
 	if is_signup_disabled():
 		frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
 
@@ -771,6 +771,7 @@ def sign_up(email, full_name, redirect_to):
 		user = frappe.get_doc({
 			"doctype":"User",
 			"email": email,
+			"mobile_no": mobile_no,
 			"first_name": escape_html(full_name),
 			"enabled": 1,
 			"new_password": random_string(10),
@@ -959,8 +960,8 @@ def throttle_user_creation():
 	if frappe.flags.in_import:
 		return
 
-	if frappe.db.get_creation_count('User', 60) > frappe.local.conf.get("throttle_user_limit", 60):
-		frappe.throw(_('Throttled'))
+	#if frappe.db.get_creation_count('User', 60) > frappe.local.conf.get("throttle_user_limit", 60):
+	#	frappe.throw(_('Throttled'))
 
 @frappe.whitelist()
 def get_role_profile(role_profile):

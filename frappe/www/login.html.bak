@@ -38,8 +38,7 @@
 	</div>
 
 	<p class="forgot-password-message">
-		<a href="#forgot">{{ _("Forgot Password?") }}</a>
-	</p>
+		<a href="#forgot">{{ _("Forgot Password?") }}</a></p>
 </div>
 
 <div class="page-card-actions">
@@ -60,14 +59,7 @@
 {% macro logo_section() %}
 <div class="page-card-head">
 	<img class="app-logo" src="{{ logo }}">
-	<h4>{{ _('Se connecter chez IREX').format(app_name or _("Frappe")) }}</h4>
-</div>
-{% endmacro %}
-
-{% macro logo_signup_section() %}
-<div class="page-card-head">
-	<img class="app-logo" src="{{ logo }}">
-	<h4>{{ _("S'inscrire chez IREX").format(app_name or _("Frappe")) }}</h4>
+	<h4>{{ _('Login to {0}').format(app_name or _("Frappe")) }}</h4>
 </div>
 {% endmacro %}
 
@@ -78,9 +70,7 @@
 		<div class="text-center my-5">
 			<h4>{{ _("Javascript is disabled on your browser") }}</h4>
 			<p class="text-muted">
-				{{ _("You need to enable JavaScript for your app to work.") }}<br>{{ _("To enable it follow the
-				instructions in the following link: {0}").format("<a
-					href='https://enable-javascript.com/'>enable-javascript.com</a></p>") }}
+				{{ _("You need to enable JavaScript for your app to work.") }}<br>{{ _("To enable it follow the instructions in the following link: {0}").format("<a href='https://enable-javascript.com/'>enable-javascript.com</a></p>") }}
 		</div>
 	</noscript>
 	<section class='for-login'>
@@ -96,7 +86,7 @@
 								<a href="{{ provider.auth_url }}"
 									class="btn btn-block btn-default btn-sm btn-login-option btn-{{ provider.name }}">
 									{% if provider.icon %}
-									{{ provider.icon }}
+										{{ provider.icon }}
 									{% endif %}
 									{{ _("Login With {0}").format(provider.provider_name) }}</a>
 							</div>
@@ -104,11 +94,12 @@
 							<p class="text-muted login-divider">{{ _("or") }}</p>
 						</div>
 					</div>
-					<a href="#email" class="btn btn-block btn-default btn-sm btn-login-option">
-						{{ _("Login With Email") }}</a>
+					<a href="#email"
+						class="btn btn-block btn-default btn-sm btn-login-option">
+					 {{ _("Login With Email") }}</a>
 				</div>
 				{% else %}
-				{{ email_login_body() }}
+					{{ email_login_body() }}
 				{%- endif -%}
 			</form>
 		</div>
@@ -125,7 +116,7 @@
 		<div class="login-content page-card">
 			{{ logo_section() }}
 			<form class="form-signin form-login" role="form">
-				{{ email_login_body() }}
+			{{ email_login_body() }}
 			</form>
 		</div>
 		{%- if not disable_signup -%}
@@ -138,7 +129,7 @@
 	{%- endif -%}
 	<section class='for-signup {{ "signup-disabled" if disable_signup else "" }}'>
 		<div class="login-content page-card">
-			{{ logo_signup_section() }}
+			{{ logo_section() }}
 			{%- if not disable_signup -%}
 			<form class="form-signin form-signup hide" role="form">
 				<div class="page-card-body">
@@ -152,14 +143,10 @@
 						<input type="email" id="signup_email" class="form-control"
 							placeholder="{{ _('jane@example.com') }}" required>
 					</div>
-					<div class="form-group">
-						<label class="form-label sr-only" for="signup_mobile_no">Phone Number</label>
-						<input type="tel" id="signup_mobile_no" class="form-control" required>
-					</div>
 				</div>
 				<div class="page-card-actions">
-					<button class="btn btn-sm btn-primary btn-block btn-signup" type="submit">{{ _("Sign up")
-						}}</button>
+					<button class="btn btn-sm btn-primary btn-block btn-signup"
+						type="submit">{{ _("Sign up") }}</button>
 
 					<p class="text-center sign-up-message">
 						<a href="#login" class="blue">{{ _("Have an account? Login") }}</a>
@@ -169,8 +156,7 @@
 			{%- else -%}
 			<div class='page-card-head mb-2'>
 				<span class='indicator gray'>{{_("Signup Disabled")}}</span>
-				<p class="text-muted text-normal sign-up-message mt-1 mb-8">{{_("Signups have been disabled for this
-					website.")}}</p>
+				<p class="text-muted text-normal sign-up-message mt-1 mb-8">{{_("Signups have been disabled for this website.")}}</p>
 				<div><a href='/' class='btn btn-primary btn-md'>{{ _("Home") }}</a></div>
 			</div>
 			{%- endif -%}
@@ -201,8 +187,8 @@
 					</div>
 				</div>
 				<div class="page-card-actions">
-					<button class="btn btn-sm btn-primary btn-block btn-forgot" type="submit">{{ _("Reset Password")
-						}}</button>
+					<button class="btn btn-sm btn-primary btn-block btn-forgot"
+						type="submit">{{ _("Reset Password") }}</button>
 					<p class="text-center sign-up-message">
 						<a href="#login">{{ _("Back to Login") }}</a>
 					</p>

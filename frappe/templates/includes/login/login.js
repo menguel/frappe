@@ -1,6 +1,38 @@
 // login.js
 // don't remove this line (used in test)
 
+var css = document.createElement("link");
+css.rel = 'stylesheet';
+css.type = "text/css";
+css.href = "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css";
+css.onload = function () {
+	console.log("jQuery Datatable Style Loaded");
+};
+document.head.appendChild(css);
+
+let phoneInput;
+
+$.getScript("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js", function () {
+	function getIp(callback) {
+		fetch('https://ipinfo.io?token=dca861fed9747a', { headers: { 'Accept': 'application/json' } })
+			.then((resp) => resp.json())
+			.catch(() => {
+				return {
+					country: 'us',
+				};
+			})
+			.then((resp) => callback(resp.country));
+	}
+	const phoneInputField = document.querySelector("#signup_mobile_no");
+	const phoneInput2 = window.intlTelInput(phoneInputField, {
+		initialCountry: "auto",
+		geoIpLookup: getIp,
+		utilsScript:
+			"https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+	});
+	phoneInput = phoneInput2;
+});
+
 window.disable_signup = {{ disable_signup and "true" or "false" }};
 
 window.login = {};
@@ -33,10 +65,17 @@ login.bind_events = function () {
 		var args = {};
 		args.cmd = "frappe.core.doctype.user.user.sign_up";
 		args.email = ($("#signup_email").val() || "").trim();
+		args.mobile_no = (phoneInput.getNumber() || "").trim()
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.full_name = frappe.utils.xss_sanitise(($("#signup_fullname").val() || "").trim());
-		if (!args.email || !validate_email(args.email) || !args.full_name) {
+		if (!args.email || !validate_email(args.email) || !args.full_name || !args.mobile_no) {
 			login.set_status('{{ _("Valid email and name required") }}', 'red');
+			frappe.msgprint('les infos ne sont pas correctes !');
+			return false;
+		} else if (!phoneInput.isValidNumber()) {
+			const phoneNumber = phoneInput.getNumber();
+			login.set_status("Le téléphone n'est pas valide", 'red');
+			frappe.msgprint("*" + phoneNumber + "*" + " n'est pas un téléphone valide !");
 			return false;
 		}
 		login.call(args);
@@ -83,6 +122,8 @@ login.bind_events = function () {
 	});
 	{% endif %}
 }
+
+
 
 
 login.route = function () {
@@ -350,3 +391,5 @@ var continue_email = function (setup, prompt) {
 		$('#otp_div').prepend(email_div);
 	}
 }
+
+

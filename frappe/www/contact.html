@@ -35,7 +35,7 @@
 				placeholder="{{ _('Your email address') }}" />
 			</div>
 			<div class="form-group">
-				<textarea rows="10" name="message" class="form-control"></textarea>
+				<textarea rows="10" name="message" class="form-control" style="height: 256px;" placeholder="{{ _('Message') }}" ></textarea>
 			</div>
 			<div class="form-group">
 				<button class="btn btn-primary btn-send">{{ _("Send") }}</button>
@@ -72,6 +72,21 @@
 			{% if skype %}
 				<i class='fa fa-skype'></i> <span itemprop="email">{{ skype }}</span><br>
 			{% endif %}
+			
+			<br>
+			<a href="https://www.facebook.com/ireturnexperience" target="_blank" style="color:black;">
+				<img style="vertical-align: middle;" src="/files/bxl-facebook-square.svg"><span style="vertical-align: middle;">Facebook</span>
+			</a>
+
+			<br>
+			<a href="https://www.linkedin.com/company/ireturnexperience" target="_blank" style="color:black;">
+				<img style="vertical-align: middle;" src="/files/bxl-linkedin-square.svg"><span style="vertical-align: middle;">LinkedIn</span>
+			</a>
+			
+			<br>
+			<a href="https://www.facebook.com/groups/ireturnexperiencecommunity" target="_blank" style="color:black;">
+				<img style="vertical-align: middle;" src="/files/facebook-group.svg"><span style="vertical-align: middle;">Facebook-community</span>
+			</a>
 
 		</div>
 		{% endif %}
