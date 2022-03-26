@@ -751,7 +751,7 @@ def verify_password(password):
 	frappe.local.login_manager.check_password(frappe.session.user, password)
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, full_name, mobile_no, location, redirect_to):
+def sign_up(email, full_name, mobile_no, location, gender, redirect_to):
 	if is_signup_disabled():
 		frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
 
@@ -773,6 +773,7 @@ def sign_up(email, full_name, mobile_no, location, redirect_to):
 			"email": email,
 			"location": location,
 			"mobile_no": mobile_no,
+			"gender": gender,
 			"first_name": escape_html(full_name),
 			"enabled": 1,
 			"new_password": random_string(10),

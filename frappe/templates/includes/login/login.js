@@ -62,10 +62,12 @@ login.bind_events = function () {
 
 	$(".form-signup").on("submit", function (event) {
 		event.preventDefault();
+		var gender_check = document.querySelector("input[name=gender]:checked");
 		var args = {};
 		args.cmd = "frappe.core.doctype.user.user.sign_up";
 		args.email = ($("#signup_email").val() || "").trim();
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
+		args.gender = (gender_check ? gender_check.value : "").trim();
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.full_name = frappe.utils.xss_sanitise(($("#signup_fullname").val() || "").trim());
@@ -75,8 +77,10 @@ login.bind_events = function () {
 			return false;
 		} else if (!phoneInput.isValidNumber()) {
 			const phoneNumber = phoneInput.getNumber();
-			login.set_status("Le téléphone n'est pas valide", 'red');
-			frappe.msgprint("*" + phoneNumber + "*" + " n'est pas un téléphone valide !");
+			login.set_status_require_phone("Le téléphone n'est pas valide", 'red');
+			return false;
+		} else if (args.gender === "") {
+			login.set_status_require_gender("veuillez sélectionner le genre !", 'red');
 			return false;
 		}
 		login.call(args);
@@ -193,6 +197,20 @@ login.set_status = function (message, color) {
 	$('section:visible .btn-primary').text(message)
 	if (color == "red") {
 		$('section:visible .page-card-body').addClass("invalid");
+	}
+}
+
+login.set_status_require_phone = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_phone");
+	}
+}
+
+login.set_status_require_gender = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_gender");
 	}
 }
 
