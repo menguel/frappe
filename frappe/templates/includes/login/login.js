@@ -108,6 +108,7 @@ login.bind_events = function () {
 		args.cmd = "frappe.core.doctype.user.user.sign_up";
 		args.email = ($("#signup_email").val() || "").trim();
 		args.birth_date = ($("#birth_date").val() || "").trim();
+		args.bio = ($("#bio").val() || "").trim();
 		args.interests = (interests || "");
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
 		args.gender = (gender_check ? gender_check.value : "").trim();
