@@ -1,6 +1,47 @@
 // login.js
 // don't remove this line (used in test)
 
+const data = [
+	{ id: 0, text: 'Développement web' },
+	{ id: 1, text: 'Analyse d\'affaire' },
+	{ id: 2, text: 'Marketing' },
+	{ id: 3, text: 'UI/UX' },
+	{ id: 4, text: 'DevOps' },
+	{ id: 5, text: 'IOT' },
+	{ id: 6, text: 'Big Data' },
+];
+
+let interests = "";
+
+$(function () {
+	const select = $('#interests');
+	select.select2({
+		placeholder: 'centre(s) d\'intérêt',
+		data: data
+	})
+		.on('change', (event) => {
+			$('section:visible .page-card-body').removeClass("invalid_interests");
+			const selecions = select.select2('data')
+				.map((element) => element.text);
+			interests = selecions.join(', ');
+
+		});
+});
+
+
+$('.label.ui.dropdown')
+	.dropdown();
+
+$('.no.label.ui.dropdown')
+	.dropdown({
+		useLabels: false
+	});
+
+$('.ui.button').on('click', function () {
+	$('.ui.dropdown')
+		.dropdown('restore defaults')
+})
+
 var css = document.createElement("link");
 css.rel = 'stylesheet';
 css.type = "text/css";
@@ -66,6 +107,7 @@ login.bind_events = function () {
 		var args = {};
 		args.cmd = "frappe.core.doctype.user.user.sign_up";
 		args.email = ($("#signup_email").val() || "").trim();
+		args.interests = (interests || "");
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
 		args.gender = (gender_check ? gender_check.value : "").trim();
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
@@ -76,8 +118,11 @@ login.bind_events = function () {
 			frappe.msgprint('les infos ne sont pas correctes !');
 			return false;
 		} else if (!phoneInput.isValidNumber()) {
-			const phoneNumber = phoneInput.getNumber();
 			login.set_status_require_phone("Le téléphone n'est pas valide", 'red');
+			return false;
+		} else if (args.interests === "") {
+			$('section:visible .page-card-body').removeClass("invalid_phone");
+			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
 			return false;
 		} else if (args.gender === "") {
 			login.set_status_require_gender("veuillez sélectionner le genre !", 'red');
@@ -204,6 +249,13 @@ login.set_status_require_phone = function (message, color) {
 	$('section:visible .btn-primary').text(message)
 	if (color == "red") {
 		$('section:visible .page-card-body').addClass("invalid_phone");
+	}
+}
+
+login.set_status_require_interests = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_interests");
 	}
 }
 
