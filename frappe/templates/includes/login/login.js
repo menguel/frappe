@@ -1,12 +1,58 @@
 // login.js
 // don't remove this line (used in test)
 
+
+
+// Interest Part
+const data = [
+	{ id: 0, text: 'Développement web' },
+	{ id: 1, text: 'Analyse d\'affaire' },
+	{ id: 2, text: 'Marketing' },
+	{ id: 3, text: 'UI/UX' },
+	{ id: 4, text: 'DevOps' },
+	{ id: 5, text: 'IOT' },
+	{ id: 6, text: 'Big Data' },
+];
+
+let interests = "";
+
+$(function () {
+	const select = $('#interests');
+	select.select2({
+		placeholder: 'centre(s) d\'intérêt',
+		data: data
+	})
+		.on('change', (event) => {
+			$('section:visible .page-card-body').removeClass("invalid_interests");
+			const selecions = select.select2('data')
+				.map((element) => element.text);
+			interests = selecions.join(', ');
+
+		});
+});
+
+
+$('.label.ui.dropdown')
+	.dropdown();
+
+$('.no.label.ui.dropdown')
+	.dropdown({
+		useLabels: false
+	});
+
+$('.ui.button').on('click', function () {
+	$('.ui.dropdown')
+		.dropdown('restore defaults')
+})
+
+
+// For Phone Number
 var css = document.createElement("link");
 css.rel = 'stylesheet';
 css.type = "text/css";
 css.href = "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css";
 css.onload = function () {
-	console.log("jQuery Datatable Style Loaded");
+	console.log("IREX");
 };
 document.head.appendChild(css);
 
@@ -32,6 +78,24 @@ $.getScript("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/int
 	});
 	phoneInput = phoneInput2;
 });
+
+// For convert file
+function getBase64(file) {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = error => reject(error);
+	});
+}
+
+// For cv file
+$(function () {
+	$("#cv").change(function () {
+		$("#filename").text($(this).val().replace(/.*(\/|\\)/, ''));
+	});
+});
+
 
 window.disable_signup = {{ disable_signup and "true" or "false" }};
 
@@ -62,10 +126,16 @@ login.bind_events = function () {
 
 	$(".form-signup").on("submit", function (event) {
 		event.preventDefault();
+		var gender_check = document.querySelector("input[name=gender]:checked");
 		var args = {};
 		args.cmd = "frappe.core.doctype.user.user.sign_up";
 		args.email = ($("#signup_email").val() || "").trim();
+		args.birth_date = ($("#birth_date").val() || "").trim();
+		args.bio = ($("#bio").val() || "").trim();
+		args.cv = document.getElementById('cv').files[0];
+		args.interests = (interests || "");
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
+		args.gender = (gender_check ? gender_check.value : "").trim();
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.full_name = frappe.utils.xss_sanitise(($("#signup_fullname").val() || "").trim());
@@ -74,13 +144,33 @@ login.bind_events = function () {
 			frappe.msgprint('les infos ne sont pas correctes !');
 			return false;
 		} else if (!phoneInput.isValidNumber()) {
-			const phoneNumber = phoneInput.getNumber();
-			login.set_status("Le téléphone n'est pas valide", 'red');
-			frappe.msgprint("*" + phoneNumber + "*" + " n'est pas un téléphone valide !");
+			login.set_status_require_phone("Le téléphone n'est pas valide", 'red');
+			return false;
+		} else if (args.interests === "") {
+			$('section:visible .page-card-body').removeClass("invalid_phone");
+			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
+			return false;
+		} else if (args.interests === "") {
+			$('section:visible .page-card-body').removeClass("invalid_phone");
+			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
+			return false;
+		} else if (!args.cv) {
+			login.set_status_require_cv("Veuillez joindre un cv s’il vous plaît !", 'red');
+			return false;
+		} else if (args.cv.type !== "application/pdf") {
+			login.set_status_require_cv("Le fichier cv doit etre un pdf !", 'red');
 			return false;
 		}
-		login.call(args);
-		return false;
+		getBase64(document.getElementById('cv').files[0]).then(
+			data => {
+				args.cv = data;
+				login.call(args);
+				return false;
+			}
+		);
+		//console.log(args);
+
+
 	});
 
 	$(".form-forgot").on("submit", function (event) {
@@ -195,6 +285,35 @@ login.set_status = function (message, color) {
 		$('section:visible .page-card-body').addClass("invalid");
 	}
 }
+
+login.set_status_require_phone = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_phone");
+	}
+}
+
+login.set_status_require_interests = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_interests");
+	}
+}
+
+login.set_status_require_gender = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_gender");
+	}
+}
+
+login.set_status_require_cv = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_cv");
+	}
+}
+
 
 login.set_invalid = function (message) {
 	$(".login-content.page-card").addClass('invalid-login');

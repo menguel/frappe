@@ -153,8 +153,37 @@
 							placeholder="{{ _('jane@example.com') }}" required>
 					</div>
 					<div class="form-group">
+						<label class="form-label sr-only" for="birth_date">Date de naissance</label>
+						<input type="text" id="birth_date" onfocus="(this.type='date')" onblur="(this.type='text')"
+							class="form-control" placeholder="Date de naissance" required>
+					</div>
+					<div class="form-group">
 						<label class="form-label sr-only" for="signup_mobile_no">Phone Number</label>
 						<input type="tel" id="signup_mobile_no" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label class="form-label sr-only" for="interests">Interests</label>
+						<select id="interests" multiple></select>
+					</div>
+					<div class="form-group">
+						<label class="form-label sr-only" for="bio">Biography</label>
+						<textarea name="biography" id="bio" cols="23" rows="5" style="width: 320px;"
+							placeholder="Qui vous êtes, ce que vous voulez devenir et comment IREX peut vous aider ?"
+							required="required"></textarea>
+					</div>
+					<div class="form-group cv">
+						<label for="cv" class="custom-file-upload">
+							<img src="/files/upload.svg" alt="upload"> Joindre un cv
+						</label>
+						<input id="cv" type="file" style="display:none;">
+						<p id="filename"></p>
+					</div>
+					<div class="form-group d-flex justify-content-around mt-5">
+						<label class="form-label sr-only" for="gender">Gender</label>
+						<span class="row"><input type="radio" id="gender_male" name="gender" value="Male"
+								class="form-control" checked>Masculin</input></span>
+						<span class="row"><input type="radio" id="gender_female" name="gender" value="Female"
+								class="form-control">Féminin</input></span>
 					</div>
 				</div>
 				<div class="page-card-actions">
@@ -216,6 +245,20 @@
 
 {% block script %}
 <script>{% include "templates/includes/login/login.js" %}</script>
+<script>
+	$('.label.ui.dropdown')
+		.dropdown();
+
+	$('.no.label.ui.dropdown')
+		.dropdown({
+			useLabels: false
+		});
+
+	$('.ui.button').on('click', function () {
+		$('.ui.dropdown')
+			.dropdown('restore defaults')
+	})
+</script>
 {% endblock %}
 
 {% block sidebar %}{% endblock %}
