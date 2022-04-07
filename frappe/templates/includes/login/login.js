@@ -392,6 +392,9 @@ login.login_handlers = (function () {
 				} else {
 					login.set_status('{{ _("Success") }}', 'green');
 					frappe.msgprint(data.message[1])
+					setTimeout(() => {
+						window.location.href = "/lms";
+					}, 3000)
 				}
 				//login.set_status(__(data.message), 'green');
 			}
