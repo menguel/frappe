@@ -5,6 +5,9 @@ from __future__ import unicode_literals, print_function
 
 from bs4 import BeautifulSoup
 
+import os
+import requests
+import sys
 import frappe
 import frappe.share
 import frappe.defaults
@@ -17,6 +20,7 @@ from frappe.utils.password import update_password as _update_password, check_pas
 from frappe.desk.notifications import clear_notifications
 from frappe.desk.doctype.notification_settings.notification_settings import create_notification_settings, toggle_notifications
 from frappe.utils.user import get_system_managers
+from frappe.utils.file_manager import save_file
 from frappe.website.utils import is_signup_disabled
 from frappe.rate_limiter import rate_limit
 from frappe.core.doctype.user_type.user_type import user_linked_with_permission_on_doctype
@@ -751,7 +755,7 @@ def verify_password(password):
 	frappe.local.login_manager.check_password(frappe.session.user, password)
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, full_name, mobile_no, location, birth_date, bio, interests, gender, redirect_to):
+def sign_up(email, full_name, mobile_no, location, birth_date, bio, cv, interests, gender, redirect_to):
 	if is_signup_disabled():
 		frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
 
@@ -777,6 +781,7 @@ def sign_up(email, full_name, mobile_no, location, birth_date, bio, interests, g
 			"birth_date": birth_date,
 			"gender": gender,
 			"bio": bio,
+			"cv": cv,
 			"first_name": escape_html(full_name),
 			"enabled": 1,
 			"new_password": random_string(10),
@@ -786,6 +791,9 @@ def sign_up(email, full_name, mobile_no, location, birth_date, bio, interests, g
 		user.flags.ignore_password_policy = True
 		user.insert()
 
+		save_file(full_name + "_cv.pdf", cv, "User", email, folder=None, decode=True, is_private=0, df=None)
+
+		
 		# set default signup role as per Portal Settings
 		default_role = frappe.db.get_value("Portal Settings", None, "default_role")
 		if default_role:

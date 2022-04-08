@@ -1,6 +1,9 @@
 // login.js
 // don't remove this line (used in test)
 
+
+
+// Interest Part
 const data = [
 	{ id: 0, text: 'Développement web' },
 	{ id: 1, text: 'Analyse d\'affaire' },
@@ -42,13 +45,12 @@ $('.ui.button').on('click', function () {
 		.dropdown('restore defaults')
 })
 
+
+// For Phone Number
 var css = document.createElement("link");
 css.rel = 'stylesheet';
 css.type = "text/css";
 css.href = "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css";
-css.onload = function () {
-	console.log("jQuery Datatable Style Loaded");
-};
 document.head.appendChild(css);
 
 let phoneInput;
@@ -73,6 +75,24 @@ $.getScript("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/int
 	});
 	phoneInput = phoneInput2;
 });
+
+// For convert file
+function getBase64(file) {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = error => reject(error);
+	});
+}
+
+// For cv file
+$(function () {
+	$("#cv").change(function () {
+		$("#filename").text($(this).val().replace(/.*(\/|\\)/, ''));
+	});
+});
+
 
 window.disable_signup = {{ disable_signup and "true" or "false" }};
 
@@ -109,6 +129,7 @@ login.bind_events = function () {
 		args.email = ($("#signup_email").val() || "").trim();
 		args.birth_date = ($("#birth_date").val() || "").trim();
 		args.bio = ($("#bio").val() || "").trim();
+		args.cv = document.getElementById('cv').files[0];
 		args.interests = (interests || "");
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
 		args.gender = (gender_check ? gender_check.value : "").trim();
@@ -126,12 +147,27 @@ login.bind_events = function () {
 			$('section:visible .page-card-body').removeClass("invalid_phone");
 			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
 			return false;
-		} else if (args.gender === "") {
-			login.set_status_require_gender("veuillez sélectionner le genre !", 'red');
+		} else if (args.interests === "") {
+			$('section:visible .page-card-body').removeClass("invalid_phone");
+			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
+			return false;
+		} else if (!args.cv) {
+			login.set_status_require_cv("Veuillez joindre un cv s’il vous plaît !", 'red');
+			return false;
+		} else if (args.cv.type !== "application/pdf") {
+			login.set_status_require_cv("Le fichier cv doit etre un pdf !", 'red');
 			return false;
 		}
-		login.call(args);
-		return false;
+		getBase64(document.getElementById('cv').files[0]).then(
+			data => {
+				args.cv = data;
+				login.call(args);
+				return false;
+			}
+		);
+		//console.log(args);
+
+
 	});
 
 	$(".form-forgot").on("submit", function (event) {
@@ -268,6 +304,14 @@ login.set_status_require_gender = function (message, color) {
 	}
 }
 
+login.set_status_require_cv = function (message, color) {
+	$('section:visible .btn-primary').text(message)
+	if (color == "red") {
+		$('section:visible .page-card-body').addClass("invalid_cv");
+	}
+}
+
+
 login.set_invalid = function (message) {
 	$(".login-content.page-card").addClass('invalid-login');
 	setTimeout(() => {
@@ -348,6 +392,9 @@ login.login_handlers = (function () {
 				} else {
 					login.set_status('{{ _("Success") }}', 'green');
 					frappe.msgprint(data.message[1])
+					setTimeout(() => {
+						window.location.href = "/lms";
+					}, 3000)
 				}
 				//login.set_status(__(data.message), 'green');
 			}
