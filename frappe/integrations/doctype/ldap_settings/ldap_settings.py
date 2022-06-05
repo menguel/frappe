@@ -361,7 +361,7 @@ class LDAPSettings(Document):
 		group = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 
 		dn = 'uid=' + user['username'] + ',' + base_dn
-		fullname = user['firstname'] + ' ' + user['lastname']
+		fullname = user['lastname']+ ' ' + user['firstname'] 
 		home_dir = "/home/users" + '/' + user['username']
 		gid = "500"
 		lastchange = int(math.floor(time() / 86400))
@@ -397,10 +397,10 @@ def test():
 	ldap_pass = "Ld1p-d3v"
 	ldap = frappe.get_doc("LDAP Settings")
 	user = {
-		"username": "tnougosso2",
+		"username": "tnougosso",
 		"firstname": "Nougosso",
 		"lastname": "Teuma",
-		"email": "tnougosso2@dev.irex.aretex.ca",
+		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
 		"uid": ldap.generate_uid(),
 		"shell": "/bin/bash",
