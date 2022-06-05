@@ -435,4 +435,4 @@ def test():
 		"uid": generate_uid(),
 		"shell": "/bin/bash",
 	}
-	create_user(user, ldap_pass)
+	create_user(user = user, admin_pass = ldap_pass)
