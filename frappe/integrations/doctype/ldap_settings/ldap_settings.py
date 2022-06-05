@@ -397,7 +397,7 @@ class LDAPSettings(Document):
 			conn.unbind_s()
 
 
-def test(self):
+def test():
 	ldap_pass = "Ld1p-d3v"
 	ldap = frappe.get_doc("LDAP Settings")
 	user = {
@@ -406,7 +406,7 @@ def test(self):
 		"lastname": "Teuma",
 		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
-		"uid": self.generate_uid(),
+		"uid": ldap.generate_uid(),
 		"shell": "/bin/bash",
 	}
 	ldap.create_user(user = user, admin_pass = ldap_pass)
