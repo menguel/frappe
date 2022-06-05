@@ -384,6 +384,7 @@ class LDAPSettings(Document):
 			conn.unbind_s()
 
 # Finds first free UID (in range FIRST_UID : LAST_UID)
+@staticmethod
 def generate_uid():
 	for uid in range(500, 600):
 		try:
