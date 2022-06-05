@@ -75,7 +75,7 @@ class LDAPSettings(Document):
 			if self.local_ca_certs_file:
 				tls_configuration.ca_certs_file = self.local_ca_certs_file
 
-			server = ldap3.Server(host="ldap://ldap.dev.irex.aretex.ca:389", tls=tls_configuration)
+			server = ldap3.Server(host=self.ldap_server_url, tls=tls_configuration)
 			bind_type = ldap3.AUTO_BIND_TLS_BEFORE_BIND if self.ssl_tls_mode == "StartTLS" else True
 
 			conn = ldap3.Connection(
@@ -337,10 +337,6 @@ class LDAPSettings(Document):
 		return data
 
 
-	# Finds GID of given group
-	def find_gid(self, name):
-		return grp.getgrnam(name)[2]
-
 	# Finds first free UID (in range FIRST_UID : LAST_UID)
 	@staticmethod
 	def generate_uid():
@@ -355,17 +351,9 @@ class LDAPSettings(Document):
 		raise Exception("No free UID!")
 
 	# Creates new entry in LDAP for given user
-	def create_user(self, user, admin_pass):
-		base_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
-		admin_dn = "cn=admin,dc=dev,dc=irex,dc=aretex,dc=ca"
-		group = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
-
-		dn = 'uid=' + user['username'] + ',' + base_dn
+	def create_ldap_user(self, user):
 		fullname = user['lastname']+ ' ' + user['firstname'] 
 		home_dir = "/home/users" + '/' + user['username']
-		gid = "500"
-		lastchange = int(math.floor(time() / 86400))
-
 
 		ldap_attr = {}
 		ldap_attr['cn'] = user['username']
@@ -373,28 +361,29 @@ class LDAPSettings(Document):
 		ldap_attr['mail'] = user['email']
 		ldap_attr['givenname'] = fullname
 		ldap_attr['homeDirectory'] = home_dir
-		ldap_attr['loginShell'] = user['shell']
-		ldap_attr['uidNumber'] = str(user['uid'])
+		ldap_attr['loginShell'] = "/bin/bash"
+		ldap_attr['uidNumber'] = str(self.generate_uid())
 		ldap_attr['gidNumber'] = "1"
 		ldap_attr['uid'] = user['username']
 		ldap_attr['userpassword'] = user['password']
 
 
-		ldap_conn = self.connect_to_ldap(admin_dn, admin_pass)
+		ldap_conn = self.connect_to_ldap(base_dn=self.base_dn, password=self.get_password(raise_exception=False))
 		user_dn = 'cn=' + user['username'] +","+ "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 
-		import ldap3
-        # object class for a user is inetOrgPerson
-		response = ldap_conn.add(dn=user_dn, object_class=['inetOrgPerson',"posixAccount","top"], attributes=ldap_attr)
-
+		try:
+			import ldap3
+			# object class for a user is inetOrgPerson
+			response = ldap_conn.add(dn=user_dn, object_class=['inetOrgPerson',"posixAccount","top"], attributes=ldap_attr)
+		except ldap3.core.exceptions.LDAPEntryAlreadyExistsResult :
+			frappe.throw("Cet utilisateur existe déjà")
+		except Exception as ex:
+			frappe.throw(str(ex))
 		return response
 
 
 
-
-
 def test():
-	ldap_pass = "Ld1p-d3v"
 	ldap = frappe.get_doc("LDAP Settings")
 	user = {
 		"username": "tnougosso",
@@ -402,10 +391,8 @@ def test():
 		"lastname": "Teuma",
 		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
-		"uid": ldap.generate_uid(),
-		"shell": "/bin/bash",
 	}
-	ldap.create_user(user = user, admin_pass = ldap_pass)
+	ldap.create_ldap_user(user)
 
 
 @frappe.whitelist(allow_guest=True)
