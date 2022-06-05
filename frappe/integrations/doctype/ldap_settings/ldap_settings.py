@@ -397,18 +397,19 @@ class LDAPSettings(Document):
 			conn.unbind_s()
 
 
-	def test(self):
-		ldap_pass = "Ld1p-d3v"
-		user = {
-			"username": "tnougosso",
-			"firstname": "Nougosso",
-			"lastname": "Teuma",
-			"email": "tnougosso@dev.irex.aretex.ca",
-			"password": "tnougosso",
-			"uid": self.generate_uid(),
-			"shell": "/bin/bash",
-		}
-		self.create_user(user = user, admin_pass = ldap_pass)
+def test(self):
+	ldap_pass = "Ld1p-d3v"
+	ldap = frappe.get_doc("LDAP Settings")
+	user = {
+		"username": "tnougosso",
+		"firstname": "Nougosso",
+		"lastname": "Teuma",
+		"email": "tnougosso@dev.irex.aretex.ca",
+		"password": "tnougosso",
+		"uid": self.generate_uid(),
+		"shell": "/bin/bash",
+	}
+	ldap.create_user(user = user, admin_pass = ldap_pass)
 
 
 @frappe.whitelist(allow_guest=True)
