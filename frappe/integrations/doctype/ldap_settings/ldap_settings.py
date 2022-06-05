@@ -3,6 +3,11 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+import grp
+import math
+import pwd
+from time import time
+from tokenize import group
 import frappe
 from frappe import _, safe_encode
 from frappe.model.document import Document
@@ -70,7 +75,7 @@ class LDAPSettings(Document):
 			if self.local_ca_certs_file:
 				tls_configuration.ca_certs_file = self.local_ca_certs_file
 
-			server = ldap3.Server(host=self.ldap_server_url, tls=tls_configuration)
+			server = ldap3.Server(host="ldap://ldap.irex.aretex.ca:389", tls=tls_configuration)
 			bind_type = ldap3.AUTO_BIND_TLS_BEFORE_BIND if self.ssl_tls_mode == "StartTLS" else True
 
 			conn = ldap3.Connection(
@@ -357,3 +362,77 @@ def reset_password(user, password, logout):
 	if not ldap.enabled:
 		frappe.throw(_("LDAP is not enabled."))
 	ldap.reset_password(user, password, logout_sessions=int(logout))
+
+
+# Finds GID of given group
+def find_gid(name):
+    return grp.getgrnam(name)[2]
+
+
+# Finds first free UID (in range FIRST_UID : LAST_UID)
+def generate_uid():
+    for uid in range(500, 600):
+        try:
+            pwd.getpwuid(uid)
+        except KeyError:
+            return uid
+        else:
+            pass
+
+    raise Exception("No free UID!")
+
+
+
+# Creates new entry in LDAP for given user
+def create_user(self, user, admin_pass):
+	base_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
+	admin_dn = "cn=admin,dc=dev,dc=irex,dc=aretex,dc=ca"
+	group = "ou=groupes,dc=dev,dc=irex,dc=aretex,dc=ca"
+
+	dn = 'uid=' + user['username'] + ',' + base_dn
+	fullname = user['firstname'] + ' ' + user['lastname']
+	home_dir = "/home/users" + '/' + user['username']
+	gid = find_gid(group)
+	lastchange = int(math.floor(time() / 86400))
+
+	entry = []
+	entry.extend([
+        ('objectClass', ["person", "organizationalPerson", "inetOrgPerson", "posixAccount", "top", "shadowAccount", "hostObject"]),
+        ('uid', user['username']),
+        ('cn', fullname),
+        ('givenname', user['firstname']),
+        ('sn', user['lastname']),
+        ('mail', user['email']),
+        ('uidNumber', str(user['uid'])),
+        ('gidNumber', str(gid)),
+        ('loginShell', user['shell']),
+        ('homeDirectory', home_dir),
+        ('shadowMax', "99999"),
+        ('shadowWarning', "7"),
+        ('shadowLastChange', str(lastchange)),
+        ('userPassword', user['password'])
+    ])
+	if (len(user['hosts'])):
+		entry.append( ('host', user['hosts']) )
+
+	conn = self.connect_to_ldap(base_dn, admin_pass)
+	conn.simple_bind_s(admin_dn, admin_pass)
+
+	try:
+		conn.add_s(dn, entry)
+	finally:
+		conn.unbind_s()
+
+
+def test():
+	ldap_pass = "Ld1p-d3v"
+	user = {
+		"username": "tnougosso",
+		"firstname": "Nougosso",
+		"lastname": "Teuma",
+		"email": "tnougosso@dev.irex.aretex.ca",
+		"password": "tnougosso",
+		"uid": generate_uid(),
+		"shell": "/bin/bash",
+	}
+	create_user(user, ldap_pass)
