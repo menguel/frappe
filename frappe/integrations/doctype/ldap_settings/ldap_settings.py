@@ -363,6 +363,8 @@ class LDAPSettings(Document):
 		dn = 'uid=' + user['username'] + ',' + base_dn
 		fullname = user['firstname'] + ' ' + user['lastname']
 		home_dir = "/home/users" + '/' + user['username']
+		gid = "500"
+		lastchange = int(math.floor(time() / 86400))
 
 
 		ldap_attr = {}
@@ -378,11 +380,11 @@ class LDAPSettings(Document):
 
 
 		ldap_conn = self.connect_to_ldap(admin_dn, admin_pass)
-		user_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
+		user_dn = 'cn=' + user['username'] +","+ "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 
 		import ldap3
         # object class for a user is inetOrgPerson
-		response = ldap_conn.add(dn=dn, object_class='inetOrgPerson', attributes=ldap_attr)
+		response = ldap_conn.add(dn=dn, object_class=['inetOrgPerson',"posixAccount","top"], attributes=ldap_attr)
 
 		return response
 
