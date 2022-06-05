@@ -358,7 +358,7 @@ class LDAPSettings(Document):
 	def create_user(self, user, admin_pass):
 		base_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 		admin_dn = "cn=admin,dc=dev,dc=irex,dc=aretex,dc=ca"
-		group = "ou=groupes,dc=dev,dc=irex,dc=aretex,dc=ca"
+		group = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 
 		dn = 'uid=' + user['username'] + ',' + base_dn
 		fullname = user['firstname'] + ' ' + user['lastname']
