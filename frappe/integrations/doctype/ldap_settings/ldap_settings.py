@@ -384,7 +384,7 @@ class LDAPSettings(Document):
 			('userPassword', user['password'])
 		])
 
-		conn = self.connect_to_ldap(base_dn, admin_pass)
+		conn = self.connect_to_ldap(admin_dn, admin_pass)
 		conn.simple_bind_s(admin_dn, admin_pass)
 
 		try:
