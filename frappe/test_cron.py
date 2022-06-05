@@ -4,7 +4,7 @@ from frappe.model.docstatus import DocStatus
 
 def cron():
     datas = frappe.db.get_all('Candidats', fields=['user','program','cohort', 'amended_from'])
-    
+    print("Done")
     for record in datas:
         if record.docstatus == DocStatus.submitted():
             
@@ -24,4 +24,4 @@ def cron():
 
             ldap.create_ldap_user(ldap_user)
 
-            print("Done !")
+            print("Done")
