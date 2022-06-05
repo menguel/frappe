@@ -363,7 +363,7 @@ class LDAPSettings(Document):
 		dn = 'uid=' + user['username'] + ',' + base_dn
 		fullname = user['firstname'] + ' ' + user['lastname']
 		home_dir = "/home/users" + '/' + user['username']
-		gid = "500"
+		gid = "1"
 		lastchange = int(math.floor(time() / 86400))
 
 		entry = []
@@ -393,7 +393,7 @@ class LDAPSettings(Document):
 		ldap_attr['loginShell'] = user['shell']
 		ldap_attr['uidNumber'] = str(user['uid'])
 		ldap_attr['uidNumber'] = user['password']
-		ldap_attr['gid'] = str(gid)
+		ldap_attr['gid'] = gid
 
 
 		ldap_conn = self.connect_to_ldap(admin_dn, admin_pass)
