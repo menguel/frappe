@@ -3,8 +3,8 @@ import frappe
 from frappe.model.docstatus import DocStatus
 
 def cron():
-    datas = frappe.db.get_all('Candidats', fields=['user','program','cohort', 'amended_from'])
-    print("Done")
+    datas = frappe.db.get_all('Candidats', fields=['user','program','cohort', 'amended_from','docstatus'])
+    print(datas)
     for record in datas:
         if record.docstatus == DocStatus.submitted():
             
