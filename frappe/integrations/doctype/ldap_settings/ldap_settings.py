@@ -75,7 +75,7 @@ class LDAPSettings(Document):
 			if self.local_ca_certs_file:
 				tls_configuration.ca_certs_file = self.local_ca_certs_file
 
-			server = ldap3.Server(host="ldap://ldap.irex.aretex.ca:389", tls=tls_configuration)
+			server = ldap3.Server(host="ldap://ldap.dev.irex.aretex.ca:389", tls=tls_configuration)
 			bind_type = ldap3.AUTO_BIND_TLS_BEFORE_BIND if self.ssl_tls_mode == "StartTLS" else True
 
 			conn = ldap3.Connection(
