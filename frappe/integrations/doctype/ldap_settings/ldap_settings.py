@@ -352,12 +352,12 @@ class LDAPSettings(Document):
 
 	# Creates new entry in LDAP for given user
 	def create_ldap_user(self, user):
-		fullname = user['lastname']+ ' ' + user['firstname'] 
+		fullname = user['firstname']+ ' ' + user['lastname'] 
 		home_dir = "/home/users" + '/' + user['username']
 
 		ldap_attr = {}
 		ldap_attr['cn'] = user['username']
-		ldap_attr['sn'] = user['lastname'] + "." + user['firstname']
+		ldap_attr['sn'] = user['firstname'] + "." + user['lastname']
 		ldap_attr['mail'] = user['email']
 		ldap_attr['givenname'] = fullname
 		ldap_attr['homeDirectory'] = home_dir
@@ -392,7 +392,7 @@ def test():
 		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
 	}
-	ldap.create_ldap_user(user)
+	
 
 
 @frappe.whitelist(allow_guest=True)
