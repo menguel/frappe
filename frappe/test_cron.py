@@ -23,3 +23,5 @@ def cron():
             ldap_user['password'] = ldap_user['username']
 
             ldap.create_ldap_user(ldap_user)
+
+            print("Done !")
