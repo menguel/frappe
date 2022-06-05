@@ -399,13 +399,10 @@ class LDAPSettings(Document):
 		ldap_conn = self.connect_to_ldap(admin_dn, admin_pass)
 		user_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 
-		try:
-			import ldap3
-        	# object class for a user is inetOrgPerson
-			response = ldap_conn.add(dn=dn, object_class='inetOrgPerson', attributes=ldap_attr)
+		import ldap3
+        # object class for a user is inetOrgPerson
+		response = ldap_conn.add(dn=dn, object_class='inetOrgPerson', attributes=ldap_attr)
 
-		except ldap3.core.exceptions.LDAPExceptionError as e:
-			response = e
 		return response
 
 
