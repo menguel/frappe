@@ -376,6 +376,7 @@ class LDAPSettings(Document):
 		ldap_attr['loginShell'] = user['shell']
 		ldap_attr['uidNumber'] = str(user['uid'])
 		ldap_attr['gidNumber'] = "1"
+		ldap_attr['uid'] = user['username']
 		ldap_attr['userpassword'] = user['password']
 
 
