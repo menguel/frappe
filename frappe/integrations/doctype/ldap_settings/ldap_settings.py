@@ -392,7 +392,7 @@ class LDAPSettings(Document):
 		ldap_attr['homeDirectory'] = home_dir
 		ldap_attr['loginShell'] = user['shell']
 		ldap_attr['uidNumber'] = str(user['uid'])
-		ldap_attr['uidNumber'] = user['password']
+		ldap_attr['password'] = user['password']
 
 
 		ldap_conn = self.connect_to_ldap(admin_dn, admin_pass)
