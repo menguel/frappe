@@ -189,6 +189,9 @@ doc_events = {
 
 scheduler_events = {
 	"cron": {
+		"* * * * *": [
+			"frappe.integrations.doctype.ldap_settings.ldap_settings.test",
+		],
 		"0/15 * * * *": [
 			"frappe.oauth.delete_oauth2_data",
 			"frappe.website.doctype.web_page.web_page.check_publish_status",
