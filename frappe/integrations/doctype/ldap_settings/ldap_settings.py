@@ -384,15 +384,31 @@ class LDAPSettings(Document):
 			('userPassword', user['password'])
 		])
 
-		import ldap3
+		ldap_attr = {}
+		ldap_attr['cn'] = user['username']
+		ldap_attr['sn'] = user['lastname'] + "." + user['firstname']
+		ldap_attr['email'] = user['email']
+		ldap_attr['givenname'] = fullname
+		ldap_attr['homeDirectory'] = home_dir
+		ldap_attr['loginShell'] = user['shell']
+		ldap_attr['uidNumber'] = str(user['uid'])
+		ldap_attr['uidNumber'] = user['password']
+		ldap_attr['gid'] = str(gid)
 
-		conn = ldap3.initialize("ldap://ldap.dev.irex.aretex.ca:389")
-		conn.simple_bind_s(admin_dn, admin_pass)
+
+		ldap_conn = self.connect_to_ldap(admin_dn, admin_pass)
+		user_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 
 		try:
-			conn.add_s(dn, entry)
-		finally:
-			conn.unbind_s()
+        	# object class for a user is inetOrgPerson
+			response = ldap_conn.add(dn=user_dn, object_class=['inetOrgPerson', "posixAccount", "top"], attributes=ldap_attr)
+
+		except LDAPException as e:
+			response = e
+		return response
+
+
+
 
 
 def test():
