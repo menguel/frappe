@@ -383,8 +383,6 @@ class LDAPSettings(Document):
 			('shadowLastChange', str(lastchange)),
 			('userPassword', user['password'])
 		])
-		if (len(user['hosts'])):
-			entry.append( ('host', user['hosts']) )
 
 		conn = self.connect_to_ldap(base_dn, admin_pass)
 		conn.simple_bind_s(admin_dn, admin_pass)
