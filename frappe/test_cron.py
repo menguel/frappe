@@ -1,7 +1,7 @@
 import frappe
 
 def cron():
-    test = frappe.get_doc({"doctype": "Test_cron",
+    test = frappe.get_doc({"doctype": "test_cron",
         "test": "test"
     })
 
