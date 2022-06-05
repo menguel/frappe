@@ -363,7 +363,7 @@ class LDAPSettings(Document):
 		dn = 'uid=' + user['username'] + ',' + base_dn
 		fullname = user['firstname'] + ' ' + user['lastname']
 		home_dir = "/home/users" + '/' + user['username']
-		gid = self.find_gid(group)
+		gid = "500"
 		lastchange = int(math.floor(time() / 86400))
 
 		entry = []
