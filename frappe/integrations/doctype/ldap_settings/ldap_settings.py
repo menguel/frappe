@@ -337,6 +337,80 @@ class LDAPSettings(Document):
 		return data
 
 
+		# Finds GID of given group
+	def find_gid(name):
+		return grp.getgrnam(name)[2]
+
+
+	# Finds first free UID (in range FIRST_UID : LAST_UID)
+	def generate_uid():
+		for uid in range(500, 600):
+			try:
+				pwd.getpwuid(uid)
+			except KeyError:
+				return uid
+			else:
+				pass
+
+		raise Exception("No free UID!")
+
+
+
+	# Creates new entry in LDAP for given user
+	def create_user(self, user, admin_pass):
+		base_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
+		admin_dn = "cn=admin,dc=dev,dc=irex,dc=aretex,dc=ca"
+		group = "ou=groupes,dc=dev,dc=irex,dc=aretex,dc=ca"
+
+		dn = 'uid=' + user['username'] + ',' + base_dn
+		fullname = user['firstname'] + ' ' + user['lastname']
+		home_dir = "/home/users" + '/' + user['username']
+		gid = self.find_gid(group)
+		lastchange = int(math.floor(time() / 86400))
+
+		entry = []
+		entry.extend([
+			('objectClass', ["person", "organizationalPerson", "inetOrgPerson", "posixAccount", "top", "shadowAccount", "hostObject"]),
+			('uid', user['username']),
+			('cn', fullname),
+			('givenname', user['firstname']),
+			('sn', user['lastname']),
+			('mail', user['email']),
+			('uidNumber', str(user['uid'])),
+			('gidNumber', str(gid)),
+			('loginShell', user['shell']),
+			('homeDirectory', home_dir),
+			('shadowMax', "99999"),
+			('shadowWarning', "7"),
+			('shadowLastChange', str(lastchange)),
+			('userPassword', user['password'])
+		])
+		if (len(user['hosts'])):
+			entry.append( ('host', user['hosts']) )
+
+		conn = self.connect_to_ldap(base_dn, admin_pass)
+		conn.simple_bind_s(admin_dn, admin_pass)
+
+		try:
+			conn.add_s(dn, entry)
+		finally:
+			conn.unbind_s()
+
+
+	def test(self):
+		ldap_pass = "Ld1p-d3v"
+		user = {
+			"username": "tnougosso",
+			"firstname": "Nougosso",
+			"lastname": "Teuma",
+			"email": "tnougosso@dev.irex.aretex.ca",
+			"password": "tnougosso",
+			"uid": self.generate_uid(),
+			"shell": "/bin/bash",
+		}
+		self.create_user(user = user, admin_pass = ldap_pass)
+
+
 @frappe.whitelist(allow_guest=True)
 def login():
 	# LDAP LOGIN LOGIC
@@ -362,74 +436,3 @@ def reset_password(user, password, logout):
 	if not ldap.enabled:
 		frappe.throw(_("LDAP is not enabled."))
 	ldap.reset_password(user, password, logout_sessions=int(logout))
-
-
-# Finds GID of given group
-def find_gid(name):
-    return grp.getgrnam(name)[2]
-
-
-# Finds first free UID (in range FIRST_UID : LAST_UID)
-def generate_uid():
-    for uid in range(500, 600):
-        try:
-            pwd.getpwuid(uid)
-        except KeyError:
-            return uid
-        else:
-            pass
-
-    raise Exception("No free UID!")
-
-
-
-# Creates new entry in LDAP for given user
-def create_user(self):
-	base_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
-	admin_dn = "cn=admin,dc=dev,dc=irex,dc=aretex,dc=ca"
-	group = "ou=groupes,dc=dev,dc=irex,dc=aretex,dc=ca"
-	admin_pass = "Ld1p-d3v"
-
-	user = {
-		"username": "tnougosso",
-		"firstname": "Nougosso",
-		"lastname": "Teuma",
-		"email": "tnougosso@dev.irex.aretex.ca",
-		"password": "tnougosso",
-		"uid": generate_uid(),
-		"shell": "/bin/bash",
-	}
-
-	dn = 'uid=' + user['username'] + ',' + base_dn
-	fullname = user['firstname'] + ' ' + user['lastname']
-	home_dir = "/home/users" + '/' + user['username']
-	gid = find_gid(group)
-	lastchange = int(math.floor(time() / 86400))
-
-	entry = []
-	entry.extend([
-        ('objectClass', ["person", "organizationalPerson", "inetOrgPerson", "posixAccount", "top", "shadowAccount", "hostObject"]),
-        ('uid', user['username']),
-        ('cn', fullname),
-        ('givenname', user['firstname']),
-        ('sn', user['lastname']),
-        ('mail', user['email']),
-        ('uidNumber', str(user['uid'])),
-        ('gidNumber', str(gid)),
-        ('loginShell', user['shell']),
-        ('homeDirectory', home_dir),
-        ('shadowMax', "99999"),
-        ('shadowWarning', "7"),
-        ('shadowLastChange', str(lastchange)),
-        ('userPassword', user['password'])
-    ])
-	if (len(user['hosts'])):
-		entry.append( ('host', user['hosts']) )
-
-	conn = self.connect_to_ldap(base_dn, admin_pass)
-	conn.simple_bind_s(admin_dn, admin_pass)
-
-	try:
-		conn.add_s(dn, entry)
-	finally:
-		conn.unbind_s()
