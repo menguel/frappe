@@ -384,8 +384,10 @@ class LDAPSettings(Document):
 			('userPassword', user['password'])
 		])
 
-		conn = self.connect_to_ldap(admin_dn, admin_pass)
-		# conn.simple_bind_s(admin_dn, admin_pass)
+		import ldap3
+
+		conn = ldap3.initialize("ldap://ldap.dev.irex.aretex.ca:389")
+		conn.simple_bind_s(admin_dn, admin_pass)
 
 		try:
 			conn.add_s(dn, entry)
