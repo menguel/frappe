@@ -387,7 +387,7 @@ class LDAPSettings(Document):
 		ldap_attr = {}
 		ldap_attr['cn'] = user['username']
 		ldap_attr['sn'] = user['lastname'] + "." + user['firstname']
-		ldap_attr['email'] = user['email']
+		ldap_attr['mail'] = user['email']
 		ldap_attr['givenname'] = fullname
 		ldap_attr['homeDirectory'] = home_dir
 		ldap_attr['loginShell'] = user['shell']
