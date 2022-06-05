@@ -337,8 +337,8 @@ class LDAPSettings(Document):
 		return data
 
 
-		# Finds GID of given group
-	def find_gid(name):
+	# Finds GID of given group
+	def find_gid(self, name):
 		return grp.getgrnam(name)[2]
 
 	# Finds first free UID (in range FIRST_UID : LAST_UID)
