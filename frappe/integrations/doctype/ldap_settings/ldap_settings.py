@@ -363,26 +363,7 @@ class LDAPSettings(Document):
 		dn = 'uid=' + user['username'] + ',' + base_dn
 		fullname = user['firstname'] + ' ' + user['lastname']
 		home_dir = "/home/users" + '/' + user['username']
-		gid = "500"
-		lastchange = int(math.floor(time() / 86400))
 
-		entry = []
-		entry.extend([
-			('objectClass', ["person", "organizationalPerson", "inetOrgPerson", "posixAccount", "top", "shadowAccount", "hostObject"]),
-			('uid', user['username']),
-			('cn', fullname),
-			('givenname', user['firstname']),
-			('sn', user['lastname']),
-			('mail', user['email']),
-			('uidNumber', str(user['uid'])),
-			('gidNumber', str(gid)),
-			('loginShell', user['shell']),
-			('homeDirectory', home_dir),
-			('shadowMax', "99999"),
-			('shadowWarning', "7"),
-			('shadowLastChange', str(lastchange)),
-			('userPassword', user['password'])
-		])
 
 		ldap_attr = {}
 		ldap_attr['cn'] = user['username']
@@ -401,7 +382,7 @@ class LDAPSettings(Document):
 
 		import ldap3
         # object class for a user is inetOrgPerson
-		response = ldap_conn.add(dn=dn, object_class=['inetOrgPerson',"posixAccount","top"], attributes=ldap_attr)
+		response = ldap_conn.add(dn=dn, object_class='inetOrgPerson', attributes=ldap_attr)
 
 		return response
 
