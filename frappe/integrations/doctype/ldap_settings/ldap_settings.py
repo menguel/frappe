@@ -396,10 +396,10 @@ def test():
 	ldap_pass = "Ld1p-d3v"
 	ldap = frappe.get_doc("LDAP Settings")
 	user = {
-		"username": "tnougosso",
+		"username": "tnougosso2",
 		"firstname": "Nougosso",
 		"lastname": "Teuma",
-		"email": "tnougosso@dev.irex.aretex.ca",
+		"email": "tnougosso2@dev.irex.aretex.ca",
 		"password": "tnougosso",
 		"uid": ldap.generate_uid(),
 		"shell": "/bin/bash",
