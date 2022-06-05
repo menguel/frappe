@@ -404,7 +404,7 @@ def test():
 		"lastname": "Teuma",
 		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
-		"uid": generate_uid(),
+		"uid": ldap.generate_uid(),
 		"shell": "/bin/bash",
 	}
 	ldap.create_user(user = user, admin_pass = ldap_pass)
