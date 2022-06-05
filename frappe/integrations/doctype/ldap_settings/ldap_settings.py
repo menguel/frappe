@@ -342,19 +342,6 @@ class LDAPSettings(Document):
 		return grp.getgrnam(name)[2]
 
 
-	# Finds first free UID (in range FIRST_UID : LAST_UID)
-	def generate_uid():
-		for uid in range(500, 600):
-			try:
-				pwd.getpwuid(uid)
-			except KeyError:
-				return uid
-			else:
-				pass
-
-		raise Exception("No free UID!")
-
-
 
 	# Creates new entry in LDAP for given user
 	def create_user(self, user, admin_pass):
@@ -396,6 +383,17 @@ class LDAPSettings(Document):
 		finally:
 			conn.unbind_s()
 
+# Finds first free UID (in range FIRST_UID : LAST_UID)
+def generate_uid():
+	for uid in range(500, 600):
+		try:
+			pwd.getpwuid(uid)
+		except KeyError:
+			return uid
+		else:
+			pass
+
+	raise Exception("No free UID!")
 
 def test():
 	ldap_pass = "Ld1p-d3v"
@@ -406,7 +404,7 @@ def test():
 		"lastname": "Teuma",
 		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
-		"uid": ldap.generate_uid(),
+		"uid": generate_uid(),
 		"shell": "/bin/bash",
 	}
 	ldap.create_user(user = user, admin_pass = ldap_pass)
