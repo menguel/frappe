@@ -384,10 +384,21 @@ def generate_uid():
 
 
 # Creates new entry in LDAP for given user
-def create_user(self, user, admin_pass):
+def create_user(self):
 	base_dn = "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
 	admin_dn = "cn=admin,dc=dev,dc=irex,dc=aretex,dc=ca"
 	group = "ou=groupes,dc=dev,dc=irex,dc=aretex,dc=ca"
+	admin_pass = "Ld1p-d3v"
+
+	user = {
+		"username": "tnougosso",
+		"firstname": "Nougosso",
+		"lastname": "Teuma",
+		"email": "tnougosso@dev.irex.aretex.ca",
+		"password": "tnougosso",
+		"uid": generate_uid(),
+		"shell": "/bin/bash",
+	}
 
 	dn = 'uid=' + user['username'] + ',' + base_dn
 	fullname = user['firstname'] + ' ' + user['lastname']
@@ -422,17 +433,3 @@ def create_user(self, user, admin_pass):
 		conn.add_s(dn, entry)
 	finally:
 		conn.unbind_s()
-
-
-def test():
-	ldap_pass = "Ld1p-d3v"
-	user = {
-		"username": "tnougosso",
-		"firstname": "Nougosso",
-		"lastname": "Teuma",
-		"email": "tnougosso@dev.irex.aretex.ca",
-		"password": "tnougosso",
-		"uid": generate_uid(),
-		"shell": "/bin/bash",
-	}
-	create_user(user = user, admin_pass = ldap_pass)
