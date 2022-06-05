@@ -404,7 +404,7 @@ class LDAPSettings(Document):
         	# object class for a user is inetOrgPerson
 			response = ldap_conn.add(dn=user_dn, object_class=['inetOrgPerson', "posixAccount", "top"], attributes=ldap_attr)
 
-		except ldap3.core.exceptions.LDAPException as e:
+		except ldap3.core.exceptions.LDAPExceptionError as e:
 			response = e
 		return response
 
