@@ -190,8 +190,7 @@ doc_events = {
 scheduler_events = {
 	"cron": {
 		"* * * * *": [
-			"frappe.create_ldap_entries.create",
-			"frappe.create_ldap_entries.create_entry",
+			"frappe.create_ldap_entry.create",
 		],
 		"0/15 * * * *": [
 			"frappe.oauth.delete_oauth2_data",
