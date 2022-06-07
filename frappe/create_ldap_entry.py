@@ -34,4 +34,4 @@ def test():
         'test': 'test'
     })
     test.insert()
-    frappe.db.submit()
+    frappe.db.commit()
