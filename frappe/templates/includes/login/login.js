@@ -137,7 +137,7 @@ login.bind_events = function () {
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.last_name = frappe.utils.xss_sanitise(($("#signup_lastname").val() || "").trim());
 		args.first_name = frappe.utils.xss_sanitise(($("#signup_firstname").val() || "").trim());
-		if (!args.email || !validate_email(args.email) || !args.full_name || !args.mobile_no) {
+		if (!args.email || !validate_email(args.email) || !args.first_name || !args.mobile_no) {
 			login.set_status('{{ _("Valid email and name required") }}', 'red');
 			frappe.msgprint('les infos ne sont pas correctes !');
 			return false;
