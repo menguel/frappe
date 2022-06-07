@@ -340,7 +340,7 @@ class LDAPSettings(Document):
 	# Finds first free UID (in range FIRST_UID : LAST_UID)
 	@staticmethod
 	def generate_uid():
-		for uid in range(500, 600):
+		for uid in range(1, 2000):
 			try:
 				pwd.getpwuid(uid)
 			except KeyError:
@@ -392,7 +392,7 @@ def test():
 		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
 	}
-	
+
 
 
 @frappe.whitelist(allow_guest=True)
