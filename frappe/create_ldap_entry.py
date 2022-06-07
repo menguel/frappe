@@ -26,3 +26,12 @@ def create():
                 ldap.create_ldap_user(ldap_user)
 
                 print("Done")
+
+def test():
+
+    test = frappe.get_doc({
+        'doctype': 'test_cron',
+        'test': 'test'
+    })
+    test.insert()
+    frappe.db.submit()
