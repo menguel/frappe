@@ -8,8 +8,10 @@ def create():
     for record in datas:
         cohort = frappe.get_doc("Cohort", record.cohort)
 
+        print(cohort.start_date)
+        print(frappe.utils.nowdate())
         if cohort.start_date == frappe.utils.nowdate():
-
+            
             if record.docstatus == DocStatus.submitted():
                 user = frappe.get_doc("User", record.user)
 
