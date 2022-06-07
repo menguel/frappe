@@ -1,4 +1,5 @@
 from ast import For
+from datetime import datetime
 import frappe
 from frappe.model.docstatus import DocStatus
 
@@ -8,10 +9,11 @@ def create():
     for record in datas:
         cohort = frappe.get_doc("Cohort", record.cohort)
 
+        dto = datetime.strptime(frappe.utils.nowdate().date(), '%Ym-%m-%d').date()
         print(type(cohort.start_date))
-        print(type(frappe.utils.nowdate().date()))
+        print(type(dto))
 
-        if cohort.start_date == frappe.utils.nowdate().date():
+        if cohort.start_date == frappe.utils.nowdate():
             if record.docstatus == DocStatus.submitted():
                 user = frappe.get_doc("User", record.user)
                 first_name = user.first_name.split(" ")[0].lower()
