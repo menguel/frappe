@@ -9,7 +9,7 @@ def create():
     for record in datas:
         cohort = frappe.get_doc("Cohort", record.cohort)
 
-        dto = datetime.strptime(frappe.utils.nowdate(), '%Ym-%m-%d').date()
+        dto = datetime.strptime(frappe.utils.nowdate(), '%Y-%m-%d').date()
         print(type(cohort.start_date))
         print(type(dto))
 
