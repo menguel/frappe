@@ -5,15 +5,11 @@ from frappe.model.docstatus import DocStatus
 
 def create():
     datas = frappe.db.get_all('Candidats', fields=['user','program','cohort', 'amended_from','docstatus'])
-    
+    date_now = datetime.strptime(frappe.utils.nowdate(), '%Y-%m-%d').date()
     for record in datas:
         cohort = frappe.get_doc("Cohort", record.cohort)
 
-        dto = datetime.strptime(frappe.utils.nowdate(), '%Y-%m-%d').date()
-        print(type(cohort.start_date))
-        print(type(dto))
-
-        if cohort.start_date == frappe.utils.nowdate():
+        if cohort.start_date == date_now:
             if record.docstatus == DocStatus.submitted():
                 user = frappe.get_doc("User", record.user)
                 first_name = user.first_name.split(" ")[0].lower()
