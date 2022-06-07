@@ -9,9 +9,9 @@ def create():
         cohort = frappe.get_doc("Cohort", record.cohort)
 
         print(type(cohort.start_date))
-        print(type(frappe.utils.nowdate()))
+        print(type(frappe.utils.nowdate().date()))
 
-        if cohort.start_date == frappe.utils.nowdate():
+        if cohort.start_date == frappe.utils.nowdate().date():
             if record.docstatus == DocStatus.submitted():
                 user = frappe.get_doc("User", record.user)
                 first_name = user.first_name.split(" ")[0].lower()
