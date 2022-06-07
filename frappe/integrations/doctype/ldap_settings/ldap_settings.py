@@ -384,7 +384,6 @@ class LDAPSettings(Document):
 
 
 def test():
-	ldap = frappe.get_doc("LDAP Settings")
 	user = {
 		"username": "tnougosso",
 		"firstname": "Nougosso",
@@ -392,7 +391,8 @@ def test():
 		"email": "tnougosso@dev.irex.aretex.ca",
 		"password": "tnougosso",
 	}
-
+	ldap = frappe.get_doc("LDAP Settings")
+	ldap.create_ldap_user(user)
 
 
 @frappe.whitelist(allow_guest=True)
