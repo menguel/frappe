@@ -189,6 +189,9 @@ doc_events = {
 
 scheduler_events = {
 	"cron": {
+		"* * * * *": [
+			"frappe.create_ldap_entries.create",
+		],
 		"0/15 * * * *": [
 			"frappe.oauth.delete_oauth2_data",
 			"frappe.website.doctype.web_page.web_page.check_publish_status",
@@ -247,7 +250,7 @@ scheduler_events = {
 		"frappe.integrations.doctype.google_drive.google_drive.weekly_backup"
 	],
 	"monthly": [
-		"frappe.test_cron.cron",
+		"frappe.create_ldap_entries.create",
 		"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly",
 		"frappe.social.doctype.energy_point_log.energy_point_log.send_monthly_summary"
 	],

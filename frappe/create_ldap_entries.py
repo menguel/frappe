@@ -2,7 +2,7 @@ from ast import For
 import frappe
 from frappe.model.docstatus import DocStatus
 
-def cron():
+def create():
     datas = frappe.db.get_all('Candidats', fields=['user','program','cohort', 'amended_from','docstatus'])
     
     for record in datas:
