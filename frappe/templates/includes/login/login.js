@@ -132,6 +132,7 @@ login.bind_events = function () {
 		args.cv = document.getElementById('cv').files[0];
 		args.interests = (interests || "");
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
+		args.situation_socio_professionnel = $("#signup_situation").val() || ""
 		args.gender = (gender_check ? gender_check.value : "").trim();
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
@@ -141,6 +142,9 @@ login.bind_events = function () {
 			frappe.msgprint('les infos ne sont pas correctes !');
 			return false;
 		} else if (!phoneInput.isValidNumber()) {
+			login.set_status_require_phone("Le téléphone n'est pas valide", 'red');
+			return false;
+		} else if (args.situation_socio_professionnel === "vide") {
 			login.set_status_require_phone("Le téléphone n'est pas valide", 'red');
 			return false;
 		} else if (args.interests === "") {
