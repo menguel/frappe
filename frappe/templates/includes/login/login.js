@@ -145,14 +145,17 @@ login.bind_events = function () {
 			login.set_status_require_phone("Le téléphone n'est pas valide", 'red');
 			return false;
 		} else if (args.situation_socio_professionnel === "vide") {
+			$('section:visible .page-card-body').removeClass("invalid_phone");
 			login.set_status_require_situation("Choisir une situation professionnelle.", 'red');
 			return false;
 		} else if (args.interests === "") {
 			$('section:visible .page-card-body').removeClass("invalid_phone");
+			$('section:visible .page-card-body').removeClass("invalid_situation");
 			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
 			return false;
 		} else if (args.interests === "") {
 			$('section:visible .page-card-body').removeClass("invalid_phone");
+			$('section:visible .page-card-body').removeClass("invalid_situation");
 			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
 			return false;
 		} else if (!args.cv) {
