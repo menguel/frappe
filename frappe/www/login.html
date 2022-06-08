@@ -169,6 +169,18 @@
 						<label class="form-label sr-only" for="signup_mobile_no">Phone Number</label>
 						<input type="tel" id="signup_mobile_no" class="form-control" required>
 					</div>
+
+					<div class="form-group">
+						<label class="form-label sr-only" for="signup_situation">Situation socio professionnele</label>
+						<select name="situation" id="signup_situation" class="form-control" required>
+							<option value="vide" selected="selected">-- Situation professionnele --</option>
+							<option value="Étudiant">Étudiant</option>
+							<option value="Jeune diplômé">Jeune diplômé(moins 1 an)</option>
+							<option value="chercheur d'emploi">Chercheur d'emploi(diplômé plus 1 an)</option>
+							<option value="travailleur en activité">Travailleur en activité</option>
+						</select>
+					</div>
+
 					<div class="form-group">
 						<label class="form-label sr-only" for="interests">Interests</label>
 						<select id="interests" multiple></select>
