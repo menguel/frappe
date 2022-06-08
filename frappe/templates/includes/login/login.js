@@ -137,6 +137,7 @@ login.bind_events = function () {
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.full_name = frappe.utils.xss_sanitise(($("#signup_fullname").val() || "").trim());
+		const size = (args.cv.size / 1024 / 1024).toFixed(2);
 		if (!args.email || !validate_email(args.email) || !args.full_name || !args.mobile_no) {
 			login.set_status('{{ _("Valid email and name required") }}', 'red');
 			frappe.msgprint('les infos ne sont pas correctes !');
@@ -153,16 +154,14 @@ login.bind_events = function () {
 			$('section:visible .page-card-body').removeClass("invalid_situation");
 			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
 			return false;
-		} else if (args.interests === "") {
-			$('section:visible .page-card-body').removeClass("invalid_phone");
-			$('section:visible .page-card-body').removeClass("invalid_situation");
-			login.set_status_require_interests("Choisir au moins un centre d'intérêt.", 'red');
-			return false;
 		} else if (!args.cv) {
 			login.set_status_require_cv("Veuillez joindre un cv s’il vous plaît !", 'red');
 			return false;
 		} else if (args.cv.type !== "application/pdf") {
 			login.set_status_require_cv("Le fichier cv doit etre un pdf !", 'red');
+			return false;
+		} else if (size > 2) {
+			login.set_status_require_cv("Le cv doit etre moins de 2 Mo. actuel: " + size + "Mo", 'red');
 			return false;
 		}
 		getBase64(document.getElementById('cv').files[0]).then(
