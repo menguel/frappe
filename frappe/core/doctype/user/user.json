@@ -39,6 +39,7 @@
   "mute_sounds",
   "column_break_22",
   "mobile_no",
+  "situation_socio_professionnel",
   "change_password",
   "new_password",
   "logout_all_sessions",
@@ -602,6 +603,12 @@
    "fieldtype": "Link",
    "label": "Module Profile",
    "options": "Module Profile"
+  },
+  {
+   "fieldname": "situation_socio_professionnel",
+   "fieldtype": "Select",
+   "label": "Situation socio-professionnel",
+   "options": "\u00c9tudiant\nJeune dipl\u00f4m\u00e9\nchercheur d'emploi\ntravailleur en activit\u00e9"
   }
  ],
  "icon": "fa fa-user",
@@ -670,7 +677,7 @@
   }
  ],
  "max_attachments": 5,
- "modified": "2021-02-02 16:11:06.037543",
+ "modified": "2022-06-08 13:41:59.498215",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
