@@ -24,8 +24,22 @@ def create():
                 ldap_user['password'] = ldap_user['username']
 
                 ldap.create_ldap_user(ldap_user)
-
                 print("Done")
+
+                frappe.sendmail(
+                    recipients=user,
+                    subject='Email de bienvenue',
+                    template='credentials_email',
+                    args=dict(
+                        name=user.full_name,
+                        sexe = user.gender,
+                        username=ldap_user.username,
+                        password=ldap_user.password
+                    ),
+                    header='BIENVENUE DANS LA COMMUNAUTÉ IREX'
+                )
+
+
 
 def test():
 
