@@ -23,21 +23,20 @@ def create():
                 ldap_user['email'] = ldap_user['username'] + "@" + url
                 ldap_user['password'] = ldap_user['username']
 
-                ldap.create_ldap_user(ldap_user)
+                # ldap.create_ldap_user(ldap_user)
+
+                ldap_account = frappe.get_doc({
+                    "doctype":"LDAP Account",
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "email": user.email,
+                })
+
+                ldap_account.insert()
+                frappe.db.commit();
                 print("Done")
 
-                frappe.sendmail(
-                    recipients=user,
-                    subject='Email de bienvenue',
-                    template='credentials_email',
-                    args=dict(
-                        name=user.full_name,
-                        sexe = user.gender,
-                        username=ldap_user.username,
-                        password=ldap_user.password
-                    ),
-                    header='BIENVENUE DANS LA COMMUNAUTÉ IREX'
-                )
+                
 
 
 
