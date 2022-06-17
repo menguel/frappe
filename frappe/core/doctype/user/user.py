@@ -755,7 +755,7 @@ def verify_password(password):
 	frappe.local.login_manager.check_password(frappe.session.user, password)
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, full_name, mobile_no, location, birth_date, bio, cv, interests, gender, redirect_to):
+def sign_up(email, last_name, first_name, mobile_no, location, birth_date, bio, cv, interests, gender, redirect_to):
 	if is_signup_disabled():
 		frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
 
@@ -782,7 +782,8 @@ def sign_up(email, full_name, mobile_no, location, birth_date, bio, cv, interest
 			"gender": gender,
 			"bio": bio,
 			"cv": cv,
-			"first_name": escape_html(full_name),
+			"first_name": escape_html(first_name),
+			"last_name": last_name,
 			"enabled": 1,
 			"new_password": random_string(10),
 			"user_type": "Website User"
@@ -791,7 +792,7 @@ def sign_up(email, full_name, mobile_no, location, birth_date, bio, cv, interest
 		user.flags.ignore_password_policy = True
 		user.insert()
 
-		save_file(full_name + "_cv.pdf", cv, "User", email, folder=None, decode=True, is_private=0, df=None)
+		save_file(first_name.split(" ")[0].lower() + "_cv.pdf", cv, "User", email, folder=None, decode=True, is_private=0, df=None)
 
 		
 		# set default signup role as per Portal Settings
