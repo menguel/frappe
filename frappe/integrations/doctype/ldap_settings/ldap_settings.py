@@ -340,7 +340,7 @@ class LDAPSettings(Document):
 	# Finds first free UID (in range FIRST_UID : LAST_UID)
 	@staticmethod
 	def generate_uid():
-		for uid in range(500, 600):
+		for uid in range(1, 2000):
 			try:
 				pwd.getpwuid(uid)
 			except KeyError:
@@ -352,7 +352,7 @@ class LDAPSettings(Document):
 
 	# Creates new entry in LDAP for given user
 	def create_ldap_user(self, user):
-		fullname = user['firstname']+ ' ' + user['lastname'] 
+		fullname = user['firstname']+ '.' + user['lastname'] 
 		home_dir = "/home/users" + '/' + user['username']
 
 		ldap_attr = {}
@@ -363,7 +363,7 @@ class LDAPSettings(Document):
 		ldap_attr['homeDirectory'] = home_dir
 		ldap_attr['loginShell'] = "/bin/bash"
 		ldap_attr['uidNumber'] = str(self.generate_uid())
-		ldap_attr['gidNumber'] = "1"
+		ldap_attr['gidNumber'] = "501"
 		ldap_attr['uid'] = user['username']
 		ldap_attr['userpassword'] = user['password']
 
@@ -384,15 +384,15 @@ class LDAPSettings(Document):
 
 
 def test():
-	ldap = frappe.get_doc("LDAP Settings")
 	user = {
-		"username": "tnougosso",
-		"firstname": "Nougosso",
-		"lastname": "Teuma",
-		"email": "tnougosso@dev.irex.aretex.ca",
-		"password": "tnougosso",
+		"username": "pabouar",
+		"firstname": "Prosper",
+		"lastname": "Abouar",
+		"email": "pabouar@dev.irex.aretex.ca",
+		"password": "pabouar",
 	}
-	
+	ldap = frappe.get_doc("LDAP Settings")
+	ldap.create_ldap_user(user)
 
 
 @frappe.whitelist(allow_guest=True)
