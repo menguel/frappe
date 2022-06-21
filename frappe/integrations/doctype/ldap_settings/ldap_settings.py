@@ -367,6 +367,7 @@ class LDAPSettings(Document):
 		ldap_attr['uid'] = user['username']
 		ldap_attr['userpassword'] = user['password']
 
+		print(self.base_dn)
 
 		ldap_conn = self.connect_to_ldap(base_dn=self.base_dn, password=self.get_password(raise_exception=False))
 		user_dn = 'cn=' + user['username'] +","+ "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
