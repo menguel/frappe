@@ -385,11 +385,11 @@ class LDAPSettings(Document):
 
 def test():
 	user = {
-		"username": "pabouar",
-		"firstname": "Prosper",
-		"lastname": "Abouar",
-		"email": "pabouar@dev.irex.aretex.ca",
-		"password": "pabouar",
+		"username": "tcompte",
+		"firstname": "test",
+		"lastname": "compte",
+		"email": "tcompte@dev.irex.aretex.ca",
+		"password": "tcompte",
 	}
 	ldap = frappe.get_doc("LDAP Settings")
 	ldap.create_ldap_user(user)
