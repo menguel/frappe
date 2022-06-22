@@ -370,7 +370,7 @@ class LDAPSettings(Document):
 		print(self.base_dn)
 
 		ldap_conn = self.connect_to_ldap(base_dn=self.base_dn, password=self.get_password(raise_exception=False))
-		user_dn = 'cn=' + user['username'] +","+ "cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
+		user_dn = 'cn=' + user['username'] +","+ self.ldap_search_path_user
 
 		try:
 			import ldap3
