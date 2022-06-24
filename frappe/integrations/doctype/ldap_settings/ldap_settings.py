@@ -342,7 +342,7 @@ class LDAPSettings(Document):
 	@staticmethod
 	def generate_uid():
 		records = frappe.db.get_list('LDAP Account', pluck='name')
-		frappe.throw(UID_BASE + records.lenght + 1)
+		frappe.throw(UID_BASE + records.len() + 1)
 		return UID_BASE + records.lenght + 1
 
 
