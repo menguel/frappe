@@ -13,6 +13,7 @@ from frappe import _, safe_encode
 from frappe.model.document import Document
 from frappe.twofactor import (should_run_2fa, authenticate_for_2factor,confirm_otp_token)
 
+UID_BASE = 1534
 class LDAPSettings(Document):
 	def validate(self):
 		if not self.enabled:
@@ -337,18 +338,14 @@ class LDAPSettings(Document):
 		return data
 
 
-	# Finds first free UID (in range FIRST_UID : LAST_UID)
+	# Finds first free UID (in range FIRST_UID : LAST_UID)		
 	@staticmethod
 	def generate_uid():
-		for uid in range(1, 2000):
-			try:
-				pwd.getpwuid(uid)
-			except KeyError:
-				return uid
-			else:
-				pass
+		records = frappe.db.get_list('LDAP Account', pluck='name')
+		frappe.throw(UID_BASE + records.lenght + 1)
+		return UID_BASE + records.lenght + 1
 
-		raise Exception("No free UID!")
+
 
 	# Creates new entry in LDAP for given user
 	def create_ldap_user(self, user):
