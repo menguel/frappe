@@ -13,7 +13,7 @@ from frappe import _, safe_encode
 from frappe.model.document import Document
 from frappe.twofactor import (should_run_2fa, authenticate_for_2factor,confirm_otp_token)
 
-UID_BASE = 1534
+UID_BASE = 1531
 class LDAPSettings(Document):
 	def validate(self):
 		if not self.enabled:
