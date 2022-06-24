@@ -341,7 +341,7 @@ class LDAPSettings(Document):
 	# Finds first free UID (in range FIRST_UID : LAST_UID)		
 	@staticmethod
 	def generate_uid():
-		records = frappe.db.get_list('LDAP Account', pluck='name')
+		records = frappe.db.get_list('LDAP Account')
 		frappe.throw(UID_BASE + records.len() + 1)
 		return UID_BASE + records.len() + 1
 
