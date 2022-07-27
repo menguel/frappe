@@ -12,6 +12,7 @@ import frappe
 from frappe import _, safe_encode
 from frappe.model.document import Document
 from frappe.twofactor import (should_run_2fa, authenticate_for_2factor,confirm_otp_token)
+from ldap3.extend.microsoft.addMembersToGroups import ad_add_members_to_groups as addUsersInGroups
 
 UID_BASE = 1531
 class LDAPSettings(Document):
@@ -378,7 +379,9 @@ class LDAPSettings(Document):
 			frappe.throw(str(ex))
 		return response
 
-
+	def move_from_group_to_another (self, user_dn, group_dn):
+		ldap_conn = self.connect_to_ldap(base_dn=self.base_dn, password=self.get_password(raise_exception=False))
+		addUsersInGroups(ldap_conn, user_dn, group_dn)
 
 def test():
 	user = {
