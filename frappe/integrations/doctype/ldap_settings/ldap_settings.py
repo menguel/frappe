@@ -14,7 +14,7 @@ from frappe.model.document import Document
 from frappe.twofactor import (should_run_2fa, authenticate_for_2factor,confirm_otp_token)
 from ldap3.extend.microsoft.addMembersToGroups import ad_add_members_to_groups as addUsersInGroups
 
-UID_BASE = 1531
+uid_base = 1576
 class LDAPSettings(Document):
 	def validate(self):
 		if not self.enabled:
@@ -342,8 +342,8 @@ class LDAPSettings(Document):
 	# Finds first free UID (in range FIRST_UID : LAST_UID)		
 	@staticmethod
 	def generate_uid():
-		records = frappe.db.get_list('LDAP Account')
-		return UID_BASE + len(records) + 1
+		uid_base = uid_base + 1
+		return uid_base
 
 
 
