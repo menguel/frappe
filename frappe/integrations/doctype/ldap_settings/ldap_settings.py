@@ -342,6 +342,7 @@ class LDAPSettings(Document):
 	# Finds first free UID (in range FIRST_UID : LAST_UID)		
 	@staticmethod
 	def generate_uid():
+		global uid_base
 		uid_base = uid_base + 1
 		return uid_base
 
