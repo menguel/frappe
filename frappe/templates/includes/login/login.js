@@ -136,9 +136,10 @@ login.bind_events = function () {
 		args.gender = (gender_check ? gender_check.value : "").trim();
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
-		args.full_name = frappe.utils.xss_sanitise(($("#signup_fullname").val() || "").trim());
+		args.last_name = frappe.utils.xss_sanitise(($("#signup_lastname").val() || "").trim());
+		args.first_name = frappe.utils.xss_sanitise(($("#signup_firstname").val() || "").trim());
 		const size = (args.cv.size / 1024 / 1024).toFixed(2);
-		if (!args.email || !validate_email(args.email) || !args.full_name || !args.mobile_no) {
+		if (!args.email || !validate_email(args.email) || !args.first_name || !args.mobile_no) {
 			login.set_status('{{ _("Valid email and name required") }}', 'red');
 			frappe.msgprint('les infos ne sont pas correctes !');
 			return false;

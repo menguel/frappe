@@ -3,10 +3,16 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+import grp
+import math
+import pwd
+from time import time
+from tokenize import group
 import frappe
 from frappe import _, safe_encode
 from frappe.model.document import Document
 from frappe.twofactor import (should_run_2fa, authenticate_for_2factor,confirm_otp_token)
+from ldap3.extend.microsoft.addMembersToGroups import ad_add_members_to_groups as addUsersInGroups
 
 class LDAPSettings(Document):
 	def validate(self):
@@ -78,7 +84,6 @@ class LDAPSettings(Document):
 				user=base_dn,
 				password=password,
 				auto_bind=bind_type,
-				read_only=read_only,
 				raise_exceptions=True)
 
 			return conn
@@ -330,6 +335,69 @@ class LDAPSettings(Document):
 			data['mobile_no'] = user_entry[self.ldap_mobile_field].value
 
 		return data
+
+
+	# Finds first free UID (in range FIRST_UID : LAST_UID)
+	@staticmethod
+	def generate_uid():
+		ldap = frappe.get_doc("LDAP Settings")
+		ldap.last_uid_number = 	ldap.last_uid_number + 1
+		ldap.save()
+		return ldap.last_uid_number	
+
+
+	# Creates new entry in LDAP for given user
+	def create_ldap_user(self, user):
+		fullname = user['firstname']+ '.' + user['lastname'] 
+		home_dir = "/home/users" + '/' + user['username']
+
+		ldap_attr = {}
+		ldap_attr['cn'] = user['username']
+		ldap_attr['sn'] = user['firstname'] + "." + user['lastname']
+		ldap_attr['mail'] = user['email']
+		ldap_attr['givenname'] = fullname
+		ldap_attr['homeDirectory'] = home_dir
+		ldap_attr['loginShell'] = "/bin/bash"
+		ldap_attr['uidNumber'] = str(self.generate_uid())
+		ldap_attr['gidNumber'] = "501"
+		ldap_attr['uid'] = user['username']
+		ldap_attr['userpassword'] = user['password']
+
+		print(self.base_dn)
+
+		ldap_conn = self.connect_to_ldap(base_dn=self.base_dn, password=self.get_password(raise_exception=False))
+		user_dn = 'cn=' + user['username'] +","+ self.ldap_search_path_user
+
+		try:
+			import ldap3
+			# object class for a user is inetOrgPerson
+			response = ldap_conn.add(dn=user_dn, object_class=['inetOrgPerson',"posixAccount","top"], attributes=ldap_attr)
+			ldap_conn.unbind()
+		except ldap3.core.exceptions.LDAPEntryAlreadyExistsResult :
+			frappe.throw("Cet utilisateur existe déjà")
+		except Exception as ex:
+			frappe.throw(str(ex))
+		return response
+
+	def move_from_group_to_another (self, user_dn, user_cn, group_dn):
+		ldap_conn = self.connect_to_ldap(base_dn=self.base_dn, password=self.get_password(raise_exception=False))
+		ldap_conn.modify_dn(user_dn, user_cn, new_superior=group_dn)
+		ldap_conn.unbind()
+		print(ldap_conn.result)
+	
+	def modify_entry_from_dashboard(self, user_dn, user_sn, givenName, password):
+		from ldap3 import MODIFY_REPLACE
+		ldap_conn = self.connect_to_ldap(base_dn=self.base_dn, password=self.get_password(raise_exception=False))
+		ldap_conn.modify(user_dn,{'givenName': [(MODIFY_REPLACE, [givenName])], 'sn': [(MODIFY_REPLACE, [user_sn])], 'userpassword': [(MODIFY_REPLACE, [password])]})
+		ldap_conn.unbind()
+
+def test():
+	user_dn = "cn=TNougosso,cn=users,dc=dev,dc=irex,dc=aretex,dc=ca"
+	group_dn = "cn=suspended-users,dc=dev,dc=irex,dc=aretex,dc=ca"
+	user_cn = "cn=TNougosso"
+
+	ldap = frappe.get_doc("LDAP Settings")
+	ldap.move_from_group_to_another(user_dn, user_cn, group_dn)
 
 
 @frappe.whitelist(allow_guest=True)

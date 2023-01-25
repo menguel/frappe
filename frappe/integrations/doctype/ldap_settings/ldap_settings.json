@@ -20,6 +20,7 @@
   "ldap_search_string",
   "column_break_12",
   "ldap_search_path_group",
+  "last_uid_number",
   "ldap_user_creation_and_mapping_section",
   "ldap_email_field",
   "ldap_username_field",
@@ -261,12 +262,17 @@
    "fieldtype": "Data",
    "label": "LDAP search path for Groups",
    "reqd": 1
+  },
+  {
+   "fieldname": "last_uid_number",
+   "fieldtype": "Int",
+   "label": "Last UID Number"
   }
  ],
  "in_create": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-07-27 11:51:43.328271",
+ "modified": "2022-08-23 07:59:51.806930",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "LDAP Settings",
