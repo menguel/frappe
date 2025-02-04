@@ -673,10 +673,14 @@
    "group": "Integrations",
    "link_doctype": "Token Cache",
    "link_fieldname": "user"
+  },
+  {
+   "link_doctype": "Candidats",
+   "link_fieldname": "email"
   }
  ],
  "max_attachments": 5,
- "modified": "2022-06-27 10:20:48.792969",
+ "modified": "2023-01-23 07:07:03.903251",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",

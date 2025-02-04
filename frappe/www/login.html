@@ -197,6 +197,40 @@
 							placeholder="Qui vous êtes, ce que vous voulez devenir et comment IREX peut vous aider ?"
 							required="required"></textarea>
 					</div>
+					<div class="form-group">
+						<label class="form-label" for="heard" style="font-weight: bold;">Comment avez-vous entendu parlé
+							de nous ?</label>
+						<span class="row" style="margin-left: 0;">
+							<input type="radio" id="heard_linkedin" name="heard" value="LinkedIn" class="form-control"
+								checked>LinkedIn</input></span>
+						<span class="row" style="margin-left: 0;">
+							<input type="radio" id="heard_facebook" name="heard" value="Facebook"
+								class="form-control">Facebook</input>
+						</span>
+						<span class="row" style="margin-left: 0;">
+							<input type="radio" id="heard_whatsapp" name="heard" value="WhatsApp"
+								class="form-control">WhatsApp</input>
+						</span>
+						<span class="row" style="margin-left: 0;">
+							<input type="radio" id="heard_site_web_irex" name="heard" value="Site web IREX"
+								class="form-control">Site web IREX</input>
+						</span>
+						<span class="row" style="margin-left: 0;">
+							<input type="radio" id="heard_bouche_a_oreille" name="heard" value="Bouche à oreille"
+								class="form-control">Bouche à oreille
+							</input>
+						</span>
+					</div>
+					<div class="form-group">
+						<label for="signup_representant" style="font-weight: bold;">J'ai été parrainé par :</label>
+						<select id="signup_representant" name="representant" class="form-control" style="text-align: center;">
+							{% for representant in representants %}
+								<option value="{{ representant.name }}">{{ representant.combine_name }}</option>
+							{% endfor %}
+							<option value="aucun" selected>Aucun</option>
+						</select>
+					</div>
+					
 					<div class="form-group cv">
 						<label for="cv" class="custom-file-upload">
 							<img src="/files/upload.svg" alt="upload"> Joindre un cv

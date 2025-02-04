@@ -12,6 +12,7 @@ const data = [
 	{ id: 4, text: 'DevOps' },
 	{ id: 5, text: 'IOT' },
 	{ id: 6, text: 'Big Data' },
+	{ id: 7, text: 'Cybersécurité' },
 ];
 
 let interests = "";
@@ -124,6 +125,7 @@ login.bind_events = function () {
 	$(".form-signup").on("submit", function (event) {
 		event.preventDefault();
 		var gender_check = document.querySelector("input[name=gender]:checked");
+		var heard_check = document.querySelector("input[name=heard]:checked");
 		var args = {};
 		args.cmd = "frappe.core.doctype.user.user.sign_up";
 		args.email = ($("#signup_email").val() || "").trim();
@@ -133,7 +135,9 @@ login.bind_events = function () {
 		args.interests = (interests || "");
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
 		args.situation = $("#signup_situation").val() || ""
+		args.representant = $("#signup_representant").val() || ""
 		args.gender = (gender_check ? gender_check.value : "").trim();
+		args.heard = (heard_check ? heard_check.value : "").trim();
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.last_name = frappe.utils.xss_sanitise(($("#signup_lastname").val() || "").trim());
