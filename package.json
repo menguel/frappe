@@ -4,7 +4,7 @@
     "build": "node rollup/build.js",
     "production": "FRAPPE_ENV=production node rollup/build.js",
     "watch": "node rollup/watch.js",
-    "snyk-protect": "snyk protect",
+    "snyk-protect": "echo 'Skipping Snyk protection'",
     "prepare": "yarn run snyk-protect"
   },
   "repository": {
