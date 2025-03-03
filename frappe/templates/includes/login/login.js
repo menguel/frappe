@@ -142,6 +142,8 @@ login.bind_events = function () {
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.last_name = frappe.utils.xss_sanitise(($("#signup_lastname").val() || "").trim());
 		args.first_name = frappe.utils.xss_sanitise(($("#signup_firstname").val() || "").trim());
+		args.promo_code = $("#promo_code").val() || ""
+		console.log("Code promo saisie: ", args.promo_code)
 		const size = (args.cv.size / 1024 / 1024).toFixed(2);
 		if (!args.email || !validate_email(args.email) || !args.first_name || !args.mobile_no) {
 			login.set_status('{{ _("Valid email and name required") }}', 'red');

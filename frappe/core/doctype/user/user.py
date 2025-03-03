@@ -6,12 +6,14 @@ from __future__ import unicode_literals, print_function
 from bs4 import BeautifulSoup
 
 import os
+import frappe.utils
 import requests
 import sys
 import frappe
 import frappe.share
 import frappe.defaults
 import frappe.permissions
+from frappe.utils import getdate
 from frappe.model.document import Document
 from frappe.utils import (cint, flt, has_gravatar, escape_html, format_datetime,
 	now_datetime, get_formatted_email, today)
@@ -755,11 +757,26 @@ def verify_password(password):
 	frappe.local.login_manager.check_password(frappe.session.user, password)
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, last_name, first_name, situation, representant,mobile_no, location, birth_date, bio, cv, interests, gender, heard, redirect_to):
+def sign_up(email, last_name, first_name, situation, representant,mobile_no, location, birth_date, bio, cv, interests, gender, heard, redirect_to, promo_code=None):
 	if is_signup_disabled():
 		frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
 
 	user = frappe.db.get("User", {"email": email})
+
+	code_promo = frappe.get_all("Promo Code",
+		filters={"code": promo_code},
+		fields=["name", "valid_until", "max_usage", "used_count", "seller"])
+	if len(code_promo) == 0 :
+		return 0, _("Promo Code refused!")
+	else:
+		code_promo = code_promo[0]		
+	valid_date = getdate(frappe.utils.nowdate())
+	print(valid_date)
+	if code_promo.valid_until and code_promo.valid_until < getdate(frappe.utils.nowdate()):
+		return 0, _("Promo Code has expired!")
+	if code_promo.max_usage and code_promo.used_count >= code_promo.max_usage :
+		return 0, _("Promo code has already been used the maximum!")
+
 	if user:
 		if user.enabled:
 			return 0, _("Already Registered")
@@ -799,13 +816,19 @@ def sign_up(email, last_name, first_name, situation, representant,mobile_no, loc
 		user.flags.ignore_password_policy = True
 		user.insert()
 
-		lead = frappe.get_doc({
-			"doctype":"Lead",
-			"lead_name": first_name + " " + last_name,
-			"lead_owner": representant
-		})
+		if code_promo:
 
-		lead.insert(ignore_permissions = True)
+			frappe.db.set_value("Promo Code", code_promo.name, "used_count", code_promo.used_count + 1)
+			
+			selling = frappe.get_doc({
+				"doctype": "Representing Reference",
+				"client": email,
+				"seller": code_promo.seller, 
+				"promo_code": code_promo.name,
+			})
+			selling.insert(ignore_permissions=True)
+			frappe.db.commit()
+			print(selling)
 
 		save_file(first_name.split(" ")[0].lower() + "_cv.pdf", cv, "User", email, folder=None, decode=True, is_private=0, df=None)
 
