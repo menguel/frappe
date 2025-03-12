@@ -755,7 +755,7 @@ def verify_password(password):
 	frappe.local.login_manager.check_password(frappe.session.user, password)
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, last_name, first_name, situation, mobile_no, location, birth_date, bio, cv, interests, gender, redirect_to):
+def sign_up(email, last_name, first_name, situation, representant,mobile_no, location, birth_date, bio, cv, interests, gender, heard, redirect_to):
 	if is_signup_disabled():
 		frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
 
@@ -772,17 +772,23 @@ def sign_up(email, last_name, first_name, situation, mobile_no, location, birth_
 				http_status_code=429)
 
 		from frappe.utils import random_string
+
+		if representant == "aucun":
+			representant = "admin@irex.aretex.ca"
+
 		user = frappe.get_doc({
 			"doctype":"User",
 			"email": email,
 			"location": location,
 			"mobile_no": mobile_no,
 			"situation_socio_professionnel": situation,
+			"representant": representant,
 			"interest": interests,
 			"birth_date": birth_date,
 			"gender": gender,
 			"bio": bio,
 			"cv": cv,
+			"heard": heard,
 			"first_name": escape_html(first_name),
 			"last_name": last_name,
 			"enabled": 1,
@@ -792,6 +798,14 @@ def sign_up(email, last_name, first_name, situation, mobile_no, location, birth_
 		user.flags.ignore_permissions = True
 		user.flags.ignore_password_policy = True
 		user.insert()
+
+		lead = frappe.get_doc({
+			"doctype":"Lead",
+			"lead_name": first_name + " " + last_name,
+			"lead_owner": representant
+		})
+
+		lead.insert(ignore_permissions = True)
 
 		save_file(first_name.split(" ")[0].lower() + "_cv.pdf", cv, "User", email, folder=None, decode=True, is_private=0, df=None)
 
