@@ -224,8 +224,8 @@
 					<div class="form-group">
 						<label for="signup_representant" style="font-weight: bold;">Code Promo :</label>
 						<select id="signup_representant" name="representant" class="form-control" style="text-align: center;">
-							{% for representant in representants %}
-								<option value="{{ representant.name }}">{{ representant.combine_name }}</option>
+							{% for code in code_promo %}
+								<option value="{{ code.promo_code }}">{{ code.promo_code }}</option>
 							{% endfor %}
 							<option value="aucun" selected>Aucun</option>
 						</select>
