@@ -36,6 +36,8 @@ def get_context(context):
 	context["title"] = "Login"
 	context["provider_logins"] = []
 	context["representants"] = frappe.get_all("Representants", fields=['name', 'combine_name'])
+	context["code_promo"] = frappe.get_all("Supplier", 
+		fields=['supplier_name', 'promo_code'])
 	print("Contenu des éléments:", context["representants"])
 	context["disable_signup"] = frappe.utils.cint(frappe.db.get_single_value("Website Settings", "disable_signup"))
 	context["logo"] = (frappe.db.get_single_value('Website Settings', 'app_logo') or
