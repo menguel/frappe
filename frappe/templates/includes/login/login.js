@@ -135,13 +135,15 @@ login.bind_events = function () {
 		args.interests = (interests || "");
 		args.mobile_no = (phoneInput.getNumber() || "").trim();
 		args.situation = $("#signup_situation").val() || ""
-		args.promo_code = $("#signup_promo_code").val() || ""
+		args.representant = $("#signup_representant").val() || ""
 		args.gender = (gender_check ? gender_check.value : "").trim();
 		args.heard = (heard_check ? heard_check.value : "").trim();
 		args.location = (phoneInput.getSelectedCountryData().name || "").trim();
 		args.redirect_to = frappe.utils.sanitise_redirect(frappe.utils.get_url_arg("redirect-to"));
 		args.last_name = frappe.utils.xss_sanitise(($("#signup_lastname").val() || "").trim());
 		args.first_name = frappe.utils.xss_sanitise(($("#signup_firstname").val() || "").trim());
+		args.promo_code = $("#signup_promo_code").val() || ""
+		console.log("Code promo saisie: ", args.promo_code)
 		const size = (args.cv.size / 1024 / 1024).toFixed(2);
 		if (!args.email || !validate_email(args.email) || !args.first_name || !args.mobile_no) {
 			login.set_status('{{ _("Valid email and name required") }}', 'red');
