@@ -764,8 +764,20 @@ def sign_up(email, last_name, first_name, situation, representant,mobile_no, loc
 	supplier = frappe.get_all("Supplier",
 		filters={"promo_code": promo_code},
 		fields=["supplier_name", "user",])
-	supplier = supplier[0]
 	
+	supplier = supplier[0]
+	print(supplier)
+	# if len(code_promo) == 0 :
+	# 	return 0, _("Promo Code refused!")
+	# else:
+	# 	code_promo = code_promo[0]		
+	# valid_date = getdate(frappe.utils.nowdate())
+	# print(valid_date)
+	# if code_promo.valid_until and code_promo.valid_until < getdate(frappe.utils.nowdate()):
+	# 	return 0, _("Promo Code has expired!")
+	# if code_promo.max_usage and code_promo.used_count >= code_promo.max_usage :
+	# 	return 0, _("Promo code has already been used the maximum!")
+
 	if user:
 		if user.enabled:
 			return 0, _("Already Registered")
@@ -806,18 +818,29 @@ def sign_up(email, last_name, first_name, situation, representant,mobile_no, loc
 		user.flags.ignore_password_policy = True
 		user.insert()
 
+		print(user)
+
 		if supplier:
 			supplier_doc = frappe.get_doc("Supplier", supplier.supplier_name, ignore_permissions=True)
 			supplier_doc.append("recruited_prospects", {"prospect": email})
 			supplier_doc.save(ignore_permissions=True)
 			frappe.db.commit()
-		# lead = frappe.get_doc({
-		# 	"doctype":"Lead",
-		# 	"lead_name": first_name + " " + last_name,
-		# 	"lead_owner": representant
-		# })
 
-		# lead.insert(ignore_permissions = True)
+		print(supplier_doc)
+
+		# if code_promo:
+
+		# 	frappe.db.set_value("Promo Code", code_promo.name, "used_count", code_promo.used_count + 1)
+			
+		# 	selling = frappe.get_doc({
+		# 		"doctype": "Representing Reference",
+		# 		"client": email,
+		# 		"seller": code_promo.seller, 
+		# 		"promo_code": code_promo.name,
+		# 	})
+		# 	selling.insert(ignore_permissions=True)
+		# 	frappe.db.commit()
+		# 	print(selling)
 
 		save_file(first_name.split(" ")[0].lower() + "_cv.pdf", cv, "User", email, folder=None, decode=True, is_private=0, df=None)
 
@@ -834,6 +857,7 @@ def sign_up(email, last_name, first_name, situation, representant,mobile_no, loc
 			return 1, _("Please check your email for verification")
 		else:
 			return 2, _("Please ask your administrator to verify your sign-up")
+
 
 @frappe.whitelist(allow_guest=True)
 @rate_limit(key='user', limit=get_password_reset_limit, seconds = 24*60*60, methods=['POST'])
