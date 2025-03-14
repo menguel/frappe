@@ -755,11 +755,17 @@ def verify_password(password):
 	frappe.local.login_manager.check_password(frappe.session.user, password)
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, last_name, first_name, situation, representant,mobile_no, location, birth_date, bio, cv, interests, gender, heard, redirect_to):
+def sign_up(email, last_name, first_name, situation, representant,mobile_no, location, birth_date, bio, cv, interests, gender, heard, redirect_to, promo_code=None):
 	if is_signup_disabled():
 		frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
 
 	user = frappe.db.get("User", {"email": email})
+
+	supplier = frappe.get_all("Supplier",
+		filters={"promo_code": promo_code},
+		fields=["supplier_name", "user",])
+	supplier = supplier[0]
+	
 	if user:
 		if user.enabled:
 			return 0, _("Already Registered")
@@ -782,7 +788,8 @@ def sign_up(email, last_name, first_name, situation, representant,mobile_no, loc
 			"location": location,
 			"mobile_no": mobile_no,
 			"situation_socio_professionnel": situation,
-			"representant": representant,
+			"promo_code": promo_code,
+			"supplier": supplier.supplier_name,
 			"interest": interests,
 			"birth_date": birth_date,
 			"gender": gender,
@@ -799,13 +806,18 @@ def sign_up(email, last_name, first_name, situation, representant,mobile_no, loc
 		user.flags.ignore_password_policy = True
 		user.insert()
 
-		lead = frappe.get_doc({
-			"doctype":"Lead",
-			"lead_name": first_name + " " + last_name,
-			"lead_owner": representant
-		})
+		if supplier:
+			supplier_doc = frappe.get_doc("Supplier", supplier.supplier_name, ignore_permissions=True)
+			supplier_doc.append("recruited_prospects", {"prospect": email})
+			supplier_doc.save(ignore_permissions=True)
+			frappe.db.commit()
+		# lead = frappe.get_doc({
+		# 	"doctype":"Lead",
+		# 	"lead_name": first_name + " " + last_name,
+		# 	"lead_owner": representant
+		# })
 
-		lead.insert(ignore_permissions = True)
+		# lead.insert(ignore_permissions = True)
 
 		save_file(first_name.split(" ")[0].lower() + "_cv.pdf", cv, "User", email, folder=None, decode=True, is_private=0, df=None)
 
