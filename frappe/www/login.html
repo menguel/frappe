@@ -223,7 +223,7 @@
 					</div>
 					<div class="form-group">
 						<label for="signup_representant" style="font-weight: bold;">Code Promo :</label>
-						<select id="signup_representant" name="representant" class="form-control" style="text-align: center;">
+						<select id="signup_promo_code" name="representant" class="form-control" style="text-align: center;">
 							{% for code in code_promo %}
 								<option value="{{ code.promo_code }}">{{ code.promo_code }}</option>
 							{% endfor %}
